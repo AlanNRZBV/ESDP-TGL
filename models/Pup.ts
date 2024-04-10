@@ -5,7 +5,7 @@ const PUPSchema = new Schema({
     region: {
         type: String,
         required: true,
-        enum: ['Чуй', 'Иссык-Куль', 'Талас', 'Нарны', 'Джалал-Абад', 'Ош', 'Баткен'],
+        enum: ['Чуй', 'Иссык-Куль', 'Талас', 'Нарын', 'Джалал-Абад', 'Ош', 'Баткен'],
     },
 
     settlement: {
@@ -18,7 +18,7 @@ const PUPSchema = new Schema({
         required: true,
     }
 
-}, { versionKey: false });
+}, {versionKey: false});
 
 const PUP = model('PUP', PUPSchema);
 
