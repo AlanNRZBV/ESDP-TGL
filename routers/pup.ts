@@ -3,13 +3,13 @@ import {Router} from 'express';
 
 import {PupTypes} from "../types";
 import Pup from "../models/Pup";
-import permit from "../middleware/permit";
+// import permit from "../middleware/permit";
 import PUP from "../models/Pup";
-import auth, {RequestWithUser} from "../middleware/auth";
+// import auth, {RequestWithUser} from "../middleware/auth";
 
 export const pupRouter = Router();
 
-pupRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, next) => {
+pupRouter.post('/',  async (req, res, next) => {
     try {
         const pupData: PupTypes = {
             region: req.body.region,
@@ -29,7 +29,7 @@ pupRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, nex
     }
 });
 
-pupRouter.get('/', auth, permit('admin'), async (_req, res, next) => {
+pupRouter.get('/', async (_req, res, next) => {
     try {
         const pup = await PUP.find();
         return res.send(pup);

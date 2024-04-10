@@ -1,11 +1,10 @@
-import {model, Schema} from "mongoose";
+import { model, Schema } from "mongoose";
 
 const PUPSchema = new Schema({
-
     region: {
         type: String,
-        required: true,
         enum: ['Чуй', 'Иссык-Куль', 'Талас', 'Нарын', 'Джалал-Абад', 'Ош', 'Баткен'],
+        required: true
     },
 
     settlement: {
@@ -17,8 +16,7 @@ const PUPSchema = new Schema({
         type: String,
         required: true,
     }
-
-}, {versionKey: false});
+});
 
 const PUP = model('PUP', PUPSchema);
 
