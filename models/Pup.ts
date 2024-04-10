@@ -5,7 +5,7 @@ const PUPSchema = new Schema({
     region: {
         type: String,
         required: true,
-        enum: ['Chuy', 'Ysyk-Kol', 'Talas', 'Naryn', 'Jalal-Abad', 'Osh', 'Batken'],
+        enum: ['Чуй', 'Иссык-Куль', 'Талас', 'Нарны', 'Джалал-Абад', 'Ош', 'Баткен'],
     },
 
     settlement: {
