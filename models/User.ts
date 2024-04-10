@@ -76,13 +76,13 @@ const UserSchema = new mongoose.Schema({
     region: {
         type: String,
         required: true,
-        enum: ['Batken',
-            'Jalal-Abad',
-            'Issyk-Kul',
-            'Naryn',
-            'Osh',
-            'Talas',
-            'Chuy'],
+        enum: ['Баткен',
+            'Джалал-Абад',
+            'Иссык-Куль',
+            'Нарын',
+            'Ош',
+            'Талас',
+            'Чуй'],
     },
 });
 
@@ -92,6 +92,10 @@ UserSchema.methods.checkPassword = function (password: string) {
 
 UserSchema.methods.generateToken = function () {
     this.token = randomUUID();
+};
+
+UserSchema.methods.generateMarketID = function () {
+    this.marketId = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
 };
 
 UserSchema.pre('save', async function (next) {
