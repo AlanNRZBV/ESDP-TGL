@@ -7,7 +7,7 @@ export interface UserFields {
     role: string;
     token: string;
     password: string;
-    phoneNumber: number;
+    phoneNumber: string;
     region: string;
 }
 

@@ -55,7 +55,9 @@ const UserSchema = new mongoose.Schema({
             validator: function(phoneNumber: string) {
                 try {
                     const parsedPhoneNumber = phoneUtil.parse(phoneNumber, 'KG');
-                    return phoneUtil.isValidNumber(parsedPhoneNumber);
+                    const countryCode = parsedPhoneNumber.getCountryCode();
+                    const nationalNumber = parsedPhoneNumber.getNationalNumber();
+                    return countryCode === 996 && nationalNumber?.toString().length === 10;
                 } catch (error) {
                     return false;
                 }
