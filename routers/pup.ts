@@ -9,8 +9,11 @@ import auth, {RequestWithUser} from "../middleware/auth";
 
 export const pupRouter = Router();
 
-pupRouter.post('/', auth, permit('admin'),  async (req:RequestWithUser, res, next) => {
+pupRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, next) => {
     try {
+        if(req.body.region === '' || req.body.settlement === '' || req.body.address === '') {
+            return res.status(422).send({message: 'Field is not to be ad empty!'})
+        }
         const pupData: PupTypes = {
             region: req.body.region,
             settlement: req.body.settlement,
