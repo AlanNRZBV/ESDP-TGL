@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import config from './config';
 
 const app = express();
-const port = 8008;
+const port = 8000;
 
 app.use(express.static('public'));
 app.use(express.json());
