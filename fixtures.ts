@@ -28,28 +28,28 @@ const run = async () => {
             address: 'пр.Манаса 44'
         }, {
             region: 'Таласская',
-            settlement: 'г.Бишкек',
-            address: 'пр.Манаса 44'
+            settlement: 'г.Талас',
+            address: 'ул. Бердике Баатыра 191'
         }, {
             region: 'Иссык-Кульская',
-            settlement: 'г.Бишкек',
-            address: 'пр.Манаса 44'
+            settlement: 'г.Каракол',
+            address: 'ул.Ленина 186/1'
         }, {
             region: 'Нарынская',
-            settlement: 'г.Бишкек',
-            address: 'пр.Манаса 44'
+            settlement: 'г.Нарын',
+            address: 'ул.Чаначева 15'
         }, {
             region: 'Джалал-Абадская',
-            settlement: 'г.Бишкек',
-            address: 'пр.Манаса 44'
+            settlement: 'г.Джалал-Абад',
+            address: 'ул.Кыргызской Республики 79'
         }, {
             region: 'Ошская',
-            settlement: 'г.Бишкек',
-            address: 'пр.Манаса 44'
+            settlement: 'г.Ош',
+            address: 'ул.Гапара Айтиева 45а'
         }, {
             region: 'Баткенская',
-            settlement: 'г.Бишкек',
-            address: 'пр.Манаса 44'
+            settlement: 'г.Баткен',
+            address: 'ул.Раззакова 1'
         },
     ]);
 

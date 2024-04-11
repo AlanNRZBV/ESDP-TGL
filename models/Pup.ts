@@ -3,7 +3,7 @@ import { model, Schema } from "mongoose";
 const PUPSchema = new Schema({
     region: {
         type: String,
-        enum: ['Чуй', 'Иссык-Куль', 'Талас', 'Нарын', 'Джалал-Абад', 'Ош', 'Баткен'],
+        enum: ['Чуйская', 'Иссык-Кульская', 'Таласская', 'Нарынская', 'Джалал-Абадская', 'Ошская', 'Баткенская'],
         required: true
     },
 
