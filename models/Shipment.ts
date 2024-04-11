@@ -38,7 +38,7 @@ const ShipmentSchema = new Schema({
   status: {
     type:String,
     required: true,
-    enum: ['KGZ_DISPATCHED', 'KGZ_ARRIVED', 'CHN_DISPATCHED', 'CHN_ARRIVED'],
+    enum: ['КР_ОТПРАВЛЕНО', 'КР_ПРИБЫЛО', 'КНР_ОТПРАВЛЕНО', 'КНР_ПРИБЫЛО'],
   },
 
   dimensions: {
