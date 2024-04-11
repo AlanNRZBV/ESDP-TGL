@@ -1,16 +1,14 @@
 import mongoose from "mongoose";
 import {Router} from 'express';
-
-import {PupTypes} from "../types";
-import Pup from "../models/Pup";
-// import permit from "../middleware/permit";
+import permit from "../middleware/permit";
 import PUP from "../models/Pup";
-// import auth, {RequestWithUser} from "../middleware/auth";
+import auth, {RequestWithUser} from "../middleware/auth";
+import {PupTypes} from "../types";
 
 export const pupRouter = Router();
 
-pupRouter.post('/',  async (req, res, next) => {
-    try {
+pupRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, next) => {
+    try {     
         const pupData: PupTypes = {
             region: req.body.region,
             settlement: req.body.settlement,
@@ -29,7 +27,7 @@ pupRouter.post('/',  async (req, res, next) => {
     }
 });
 
-pupRouter.get('/', async (_req, res, next) => {
+pupRouter.get('/', auth, permit('admin'), async (_req, res, next) => {
     try {
         const pup = await PUP.find();
         return res.send(pup);
