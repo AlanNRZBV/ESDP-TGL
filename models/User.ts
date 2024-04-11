@@ -1,8 +1,8 @@
 import mongoose, {HydratedDocument} from "mongoose";
-import {UserFields, UserModel} from "../types";
 import bcrypt from 'bcrypt';
 import {randomUUID} from "crypto";
 import { PhoneNumberUtil } from 'google-libphonenumber';
+import {UserFields, UserModel} from "../user.type";
 
 const SALT_WORK_fACTOR = 10;
 const phoneUtil = PhoneNumberUtil.getInstance();
