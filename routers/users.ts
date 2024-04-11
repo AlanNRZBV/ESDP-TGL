@@ -14,6 +14,8 @@ usersRouter.post('/', async (req, res, next) => {
             middleName: req.body.lastName,
             region: req.body.region,
             phoneNumber: req.body.phoneNumber,
+            address: req.body.address,
+            settlement: req.body.settlement
         });
 
         user.generateMarketID();
