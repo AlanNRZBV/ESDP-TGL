@@ -9,6 +9,8 @@ export interface UserFields {
     password: string;
     phoneNumber: string;
     region: string;
+    settlement: string,
+    address: string,
 }
 
 interface UserMethods {
