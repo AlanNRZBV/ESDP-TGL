@@ -4,7 +4,7 @@ export interface UserFields {
     firstName: string;
     lastName: string;
     middleName: string,
-    pup: string,
+    pupID: string,
     role: string;
     token: string;
     password: string;
