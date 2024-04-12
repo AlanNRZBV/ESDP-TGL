@@ -1,9 +1,12 @@
+import {ObjectId} from "mongoose";
+
 export interface UserFields {
     email: string;
     marketId: number;
     firstName: string;
     lastName: string;
     middleName: string,
+    pup: ObjectId | undefined,
     role: string;
     token: string;
     password: string;
