@@ -1,8 +1,9 @@
-import mongoose, {HydratedDocument} from "mongoose";
+import mongoose, {HydratedDocument, Schema, Types} from "mongoose";
 import bcrypt from 'bcrypt';
 import {randomUUID} from "crypto";
 import { PhoneNumberUtil } from 'google-libphonenumber';
 import {UserFields, UserModel} from "../user.type";
+import PUP from "./Pup";
 
 const SALT_WORK_fACTOR = 10;
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -31,6 +32,15 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+    },
+    artist: {
+        type: Schema.Types.ObjectId,
+        ref: 'Artist',
+        required: true,
+        validate: async (value: Types.ObjectId) => {
+            const artist = await PUP.findById(value);
+            return Boolean(artist);
+        },
     },
     firstName: {
         type: String,
