@@ -1,10 +1,15 @@
-import { model, Schema } from "mongoose";
+import {model, Schema} from "mongoose";
 
 const PUPSchema = new Schema({
+    name: {
+      type: String,
+      required: true,
+    },
+
     region: {
         type: String,
-        enum: ['Чуйская', 'Иссык-Кульская', 'Таласская', 'Нарынская', 'Джалал-Абадская', 'Ошская', 'Баткенская'],
         required: true,
+        enum: ['Чуйская', 'Иссык-Кульская', 'Таласская', 'Нарынская', 'Джалал-Абадская', 'Ошская', 'Баткенская'],
     },
 
     settlement: {
@@ -15,8 +20,15 @@ const PUPSchema = new Schema({
     address: {
         type: String,
         required: true,
-    }
-});
+    },
+
+    phoneNumber: Number,
+
+    isChina: {
+        type: Boolean,
+        default: false,
+    },
+}, { versionKey: false });
 
 const PUP = model('PUP', PUPSchema);
 
