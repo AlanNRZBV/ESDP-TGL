@@ -19,7 +19,7 @@ const run = async () => {
         await mongoose.connect(config.mongoose.db);
         const db = mongoose.connection;
 
-        const collections = ['users'];
+        const collections = ['users', 'pups'];
 
         for (const collectionName of collections) {
             await dropCollection(db, collectionName);
@@ -49,7 +49,7 @@ const run = async () => {
                 lastName: "Admin",
                 middleName: "Admin",
                 pupID: pups[0],
-                phoneNumber: 996709888111,
+                phoneNumber: "996505999774",
                 marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
                 region: "Чуй",
                 token: crypto.randomUUID(),
@@ -63,7 +63,7 @@ const run = async () => {
                 lastName: "Manager",
                 middleName: "Manager",
                 pupID: pups[1],
-                phoneNumber: 996709888111,
+                phoneNumber: "996505999774",
                 marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
                 region: "Джалал-Абад",
                 token: crypto.randomUUID(),
@@ -77,7 +77,7 @@ const run = async () => {
                 lastName: "DefaultUser-1",
                 middleName: "DefaultUser-1",
                 pupID: pups[2],
-                phoneNumber: 996709888111,
+                phoneNumber: "996505999774",
                 marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
                 region: "Иссык-Куль",
                 token: crypto.randomUUID(),
@@ -90,7 +90,7 @@ const run = async () => {
                 lastName: "DefaultUser-2",
                 middleName: "DefaultUser-2",
                 pupID: pups[0],
-                phoneNumber: 996709888111,
+                phoneNumber: "996505999774",
                 marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
                 region: "Нарын",
                 token: crypto.randomUUID(),
@@ -103,7 +103,7 @@ const run = async () => {
                 lastName: "DefaultUser-3",
                 middleName: "DefaultUser-3",
                 pupID: pups[0],
-                phoneNumber: 996709888111,
+                phoneNumber: "996505999774",
                 marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
                 region: "Ош",
                 token: crypto.randomUUID(),
@@ -116,7 +116,7 @@ const run = async () => {
                 lastName: "DefaultUser-4",
                 middleName: "DefaultUser-4",
                 pupID: pups[0],
-                phoneNumber: 996709888111,
+                phoneNumber: "996505999774",
                 marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
                 region: "Талас",
                 token: crypto.randomUUID(),
