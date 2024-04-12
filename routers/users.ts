@@ -12,6 +12,7 @@ usersRouter.post('/', async (req, res, next) => {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             middleName: req.body.lastName,
+            pupID: req.body.pupID,
             region: req.body.region,
             phoneNumber: req.body.phoneNumber,
             address: req.body.address,
