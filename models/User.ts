@@ -33,9 +33,9 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    artist: {
+    pupID: {
         type: Schema.Types.ObjectId,
-        ref: 'Artist',
+        ref: 'PUP',
         required: true,
         validate: async (value: Types.ObjectId) => {
             const artist = await PUP.findById(value);
