@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    artist: {
+    pupID: {
         type: Schema.Types.ObjectId,
         ref: 'Artist',
         required: true,
