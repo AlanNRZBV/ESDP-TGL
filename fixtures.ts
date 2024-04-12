@@ -92,6 +92,7 @@ const run = async () => {
                 marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
                 region: "Талас",
                 token: crypto.randomUUID(),
+                address: "Чуйкова 122"
             },
         ]);
 
