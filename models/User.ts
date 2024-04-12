@@ -1,8 +1,8 @@
 import mongoose, {HydratedDocument} from "mongoose";
-import {UserFields, UserModel} from "../types";
 import bcrypt from 'bcrypt';
 import {randomUUID} from "crypto";
 import { PhoneNumberUtil } from 'google-libphonenumber';
+import {UserFields, UserModel} from "../user.type";
 
 const SALT_WORK_fACTOR = 10;
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -55,7 +55,9 @@ const UserSchema = new mongoose.Schema({
             validator: function(phoneNumber: string) {
                 try {
                     const parsedPhoneNumber = phoneUtil.parse(phoneNumber, 'KG');
-                    return phoneUtil.isValidNumber(parsedPhoneNumber);
+                    const countryCode = parsedPhoneNumber.getCountryCode();
+                    const nationalNumber = parsedPhoneNumber.getNationalNumber();
+                    return countryCode === 996 && nationalNumber?.toString().length === 10;
                 } catch (error) {
                     return false;
                 }
@@ -66,6 +68,12 @@ const UserSchema = new mongoose.Schema({
     token: {
         type: String,
         required: true,
+    },
+    settlement: {
+        type: String,
+    },
+    address: {
+        type: String,
     },
     role: {
         type: String,
