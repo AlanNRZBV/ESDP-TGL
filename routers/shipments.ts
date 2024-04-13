@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import auth, {RequestWithUser} from '../middleware/auth';
 import permit from '../middleware/permit';
+import Shipment from '../models/Shipment';
 
 const shipmentsRouter = express.Router();
 
@@ -11,8 +12,8 @@ shipmentsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
   try {
     const shipment = new Shipment({
       user: user._id,
-      userMarketId: req.body.userMarketId,
-      pupId: req.body.pupId,
+      marketID: req.body.marketID,
+      pupID: req.body.pupID,
       status: req.body.status,
       dimensions: req.body.dimensions,
       weight: req.body.weight,
