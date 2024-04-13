@@ -27,17 +27,54 @@ const run = async () => {
 
         const pups = await Pup.create([
             {
+                name: 'Pup№1',
                 region: 'Чуйская',
                 settlement: 'г.Бишкек',
-                address: 'пр.Манаса 44'
+                address: 'пр.Манаса 44',
+                isChina: false,
+                phoneNumber: "996505999774",
             }, {
+                name: 'Pup№2',
                 region: 'Таласская',
                 settlement: 'г.Талас',
-                address: 'ул. Бердике Баатыра 191'
+                address: 'ул. Бердике Баатыра 191',
+                isChina: false,
+                phoneNumber: "996505999774",
             }, {
+                name: 'Pup№3',
                 region: 'Иссык-Кульская',
                 settlement: 'г.Каракол',
-                address: 'ул.Ленина 186/1'
+                address: 'ул.Ленина 186/1',
+                isChina: false,
+                phoneNumber: "996505999774",
+            }, {
+                name: 'Pup№4',
+                region: 'Нарынская',
+                settlement: 'г.Нарын',
+                address: 'ул.Чаначева 15',
+                isChina: false,
+                phoneNumber: "996505999774",
+            }, {
+                name: 'Pup№5',
+                region: 'Джалал-Абадская',
+                settlement: 'г.Джалал-Абад',
+                address: 'ул.Кыргызской Республики 79',
+                isChina: false,
+                phoneNumber: "996505999774",
+            }, {
+                name: 'Pup№6',
+                region: 'Ошская',
+                settlement: 'г.Ош',
+                address: 'ул.Гапара Айтиева 45а',
+                isChina: false,
+                phoneNumber: "996505999774",
+            }, {
+                name: 'Pup№7',
+                region: 'Баткенская',
+                settlement: 'г.Баткен',
+                address: 'ул.Раззакова 1',
+                isChina: false,
+                phoneNumber: "996505999774",
             }
         ]);
 
