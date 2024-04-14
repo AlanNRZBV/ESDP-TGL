@@ -52,7 +52,6 @@ const UserSchema = new mongoose.Schema({
     },
     middleName: {
         type: String,
-        required: true,
     },
     marketId: {
         type: Number,
@@ -67,7 +66,7 @@ const UserSchema = new mongoose.Schema({
                     const parsedPhoneNumber = phoneUtil.parse(phoneNumber, 'KG');
                     const countryCode = parsedPhoneNumber.getCountryCode();
                     const nationalNumber = parsedPhoneNumber.getNationalNumber();
-                    return countryCode === 996 && nationalNumber?.toString().length === 10;
+                    return countryCode === 996 && nationalNumber?.toString().length === 9;
                 } catch (error) {
                     return false;
                 }

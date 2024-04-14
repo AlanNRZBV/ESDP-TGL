@@ -11,7 +11,7 @@ usersRouter.post('/', async (req, res, next) => {
             password: req.body.password,
             firstName: req.body.firstName,
             lastName: req.body.lastName,
-            middleName: req.body.lastName,
+            middleName: req.body.middleName,
             pupID: req.body.pupID,
             region: req.body.region,
             phoneNumber: req.body.phoneNumber,
