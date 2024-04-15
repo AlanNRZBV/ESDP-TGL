@@ -11,11 +11,11 @@ export const pupRouter = Router();
 
 pupRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, next) => {
     try {     
-        const pupData: PupTypes = {
+         const pupData: PupTypes = {
             region: req.body.region,
             settlement: req.body.settlement,
             address: req.body.address,
-
+        };
 
     const pup = new Pup(pupData);
     await pup.save();
