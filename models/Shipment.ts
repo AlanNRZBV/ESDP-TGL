@@ -3,7 +3,6 @@ import User from './User';
 
 const Schema = mongoose.Schema;
 
-
 const ShipmentSchema = new Schema({
   user: {
     type: mongoose.Types.ObjectId,
@@ -27,7 +26,7 @@ const ShipmentSchema = new Schema({
 
   pupId: {
     type: mongoose.Types.ObjectId,
-    ref: 'PUPS',// ToDo возможно надо поменять название
+    ref: 'PUPS', // ToDo возможно надо поменять название
     required: true,
     validate: {
       validator: async (value: mongoose.Types.ObjectId) => await PUP.findById(value),
@@ -36,19 +35,19 @@ const ShipmentSchema = new Schema({
   },
 
   status: {
-    type:String,
+    type: String,
     required: true,
     enum: ['КР_ОТПРАВЛЕНО', 'КР_ПРИБЫЛО', 'КНР_ОТПРАВЛЕНО', 'КНР_ПРИБЫЛО'],
   },
 
   dimensions: {
-    type:String,
+    type: String,
     required: true,
   },
 
   weight: {
     type: Number,
-    required: true
+    required: true,
   },
 
   price: {
@@ -59,10 +58,9 @@ const ShipmentSchema = new Schema({
   isPaid: {
     type: Boolean,
     required: true,
-    default: false
+    default: false,
   },
 });
-
 
 const Shipment = mongoose.model('Shipment', ShipmentSchema);
 export default Shipment;

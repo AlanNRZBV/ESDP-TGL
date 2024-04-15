@@ -1,5 +1,5 @@
 export interface PupTypes {
-    region: string;
-    settlement: string;
-    address: string;
+  region: string;
+  settlement: string;
+  address: string;
 }
