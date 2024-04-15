@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import User from './User';
+import PUP from './Pup';
 
 const Schema = mongoose.Schema;
 
@@ -14,7 +15,7 @@ const ShipmentSchema = new Schema({
     },
   },
 
-  userMarketId: {
+  marketID: {
     type: mongoose.Types.ObjectId,
     ref: 'User',
     required: true,
@@ -24,9 +25,9 @@ const ShipmentSchema = new Schema({
     },
   },
 
-  pupId: {
+  pupID: {
     type: mongoose.Types.ObjectId,
-    ref: 'PUPS', // ToDo возможно надо поменять название
+    ref: 'PUP',
     required: true,
     validate: {
       validator: async (value: mongoose.Types.ObjectId) => await PUP.findById(value),
