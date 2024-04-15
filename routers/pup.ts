@@ -9,9 +9,9 @@ import auth, {RequestWithUser} from '../middleware/auth';
 
 export const pupRouter = Router();
 
-pupRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, {send, status}, next) => {
-    try {
-        const pupData: PupTypes = {
+pupRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, next) => {
+    try {     
+         const pupData: PupTypes = {
             region: req.body.region,
             settlement: req.body.settlement,
             address: req.body.address,
@@ -19,7 +19,6 @@ pupRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, {send, s
 
         const pup = new Pup(pupData);
         await pup.save();
-
         return send({message: 'Pup is correctly added!', pup});
     } catch (e) {
         if (e instanceof mongoose.Error.ValidationError) {
