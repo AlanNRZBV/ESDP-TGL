@@ -2,7 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import mongoose from 'mongoose';
 import config from './config';
-
+import {pupRouter} from "./routers/pup";
 import usersRouter from "./routers/users";
 import shipmentsRouter from './routers/shipments';
 
@@ -12,8 +12,10 @@ const port = 8000;
 app.use(express.static('public'));
 app.use(express.json());
 app.use(cors());
+
 app.use('/users', usersRouter);
 app.use('/shipments', shipmentsRouter);
+app.use('/pups', pupRouter);
 
 const run = async () => {
   await mongoose.connect(config.mongoose.db);
