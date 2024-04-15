@@ -3,12 +3,8 @@ import config from './config';
 import User from './models/User';
 import Pup from './models/Pup';
 import Shipment from './models/Shipment';
-import user from './models/User';
+const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
 
-const dropCollection = async (
-  db: mongoose.Connection,
-  collectionName: string,
-) => {
   try {
     await db.dropCollection(collectionName);
   } catch (e) {
@@ -26,7 +22,7 @@ const run = async () => {
     for (const collectionName of collections) {
       await dropCollection(db, collectionName);
     }
-
+    
     const pups = await Pup.create([
       {
         name: 'Pup№1',

@@ -1,6 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import auth, {RequestWithUser} from '../middleware/auth';
+import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
 import Shipment from '../models/Shipment';
 
