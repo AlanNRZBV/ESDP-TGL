@@ -1,11 +1,11 @@
-import {model, Schema} from "mongoose";
+import { model, Schema } from "mongoose";
 
 const PUPSchema = new Schema({
     name: {
       type: String,
       required: true,
     },
-
+  
     region: {
         type: String,
         required: true,
@@ -21,14 +21,14 @@ const PUPSchema = new Schema({
         type: String,
         required: true,
     },
-
-    phoneNumber: Number,
-
+  
+   phoneNumber: Number,
+  
     isChina: {
         type: Boolean,
         default: false,
     },
-}, { versionKey: false });
+}, { versionKey: false }); 
 
 const PUP = model('PUP', PUPSchema);
 
