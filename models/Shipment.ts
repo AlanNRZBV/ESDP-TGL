@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import User from './User';
 import PUP from './Pup';
 
+
 const Schema = mongoose.Schema;
 
 const ShipmentSchema = new Schema({
