@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import config from './config';
 import User from './models/User';
 import Pup from './models/Pup';
+import Shipment from './models/Shipment';
 
 const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
   try {
@@ -22,59 +23,137 @@ const run = async () => {
       await dropCollection(db, collectionName);
     }
 
-        const pups = await Pup.create([
-            {
-                name: 'Pup№1',
-                region: 'Чуйская',
-                settlement: 'г.Бишкек',
-                address: 'пр.Манаса 44',
-                isChina: false,
-                phoneNumber: "996505999774",
-            }, {
-                name: 'Pup№2',
-                region: 'Таласская',
-                settlement: 'г.Талас',
-                address: 'ул. Бердике Баатыра 191',
-                isChina: false,
-                phoneNumber: "996505999774",
-            }, {
-                name: 'Pup№3',
-                region: 'Иссык-Кульская',
-                settlement: 'г.Каракол',
-                address: 'ул.Ленина 186/1',
-                isChina: false,
-                phoneNumber: "996505999774",
-            }, {
-                name: 'Pup№4',
-                region: 'Нарынская',
-                settlement: 'г.Нарын',
-                address: 'ул.Чаначева 15',
-                isChina: false,
-                phoneNumber: "996505999774",
-            }, {
-                name: 'Pup№5',
-                region: 'Джалал-Абадская',
-                settlement: 'г.Джалал-Абад',
-                address: 'ул.Кыргызской Республики 79',
-                isChina: false,
-                phoneNumber: "996505999774",
-            }, {
-                name: 'Pup№6',
-                region: 'Ошская',
-                settlement: 'г.Ош',
-                address: 'ул.Гапара Айтиева 45а',
-                isChina: false,
-                phoneNumber: "996505999774",
-            }, {
-                name: 'Pup№7',
-                region: 'Баткенская',
-                settlement: 'г.Баткен',
-                address: 'ул.Раззакова 1',
-                isChina: false,
-                phoneNumber: "996505999774",
-            }
-        ]);
-    
+    const pups = await Pup.create([
+      {
+        name: 'Pup№1',
+        region: 'Чуйская',
+        settlement: 'г.Бишкек',
+        address: 'пр.Манаса 44',
+        isChina: false,
+        phoneNumber: '996505999774',
+      },
+      {
+        name: 'Pup№2',
+        region: 'Таласская',
+        settlement: 'г.Талас',
+        address: 'ул. Бердике Баатыра 191',
+        isChina: false,
+        phoneNumber: '996505999774',
+      },
+      {
+        name: 'Pup№3',
+        region: 'Иссык-Кульская',
+        settlement: 'г.Каракол',
+        address: 'ул.Ленина 186/1',
+        isChina: false,
+        phoneNumber: '996505999774',
+      },
+      {
+        name: 'Pup№4',
+        region: 'Нарынская',
+        settlement: 'г.Нарын',
+        address: 'ул.Чаначева 15',
+        isChina: false,
+        phoneNumber: '996505999774',
+      },
+      {
+        name: 'Pup№5',
+        region: 'Джалал-Абадская',
+        settlement: 'г.Джалал-Абад',
+        address: 'ул.Кыргызской Республики 79',
+        isChina: false,
+        phoneNumber: '996505999774',
+      },
+      {
+        name: 'Pup№6',
+        region: 'Ошская',
+        settlement: 'г.Ош',
+        address: 'ул.Гапара Айтиева 45а',
+        isChina: false,
+        phoneNumber: '996505999774',
+      },
+      {
+        name: 'Pup№7',
+        region: 'Баткенская',
+        settlement: 'г.Баткен',
+        address: 'ул.Раззакова 1',
+        isChina: false,
+        phoneNumber: '996505999774',
+      },
+    ]);
+
+    await Shipment.create([
+      {
+        user: User._id,
+        marketID: User.marketID,
+        pupID: pups[0],
+        status: 'КР_ОТПРАВЛЕНО',
+        dimensions: 'test',
+        weight: 1,
+        price: 250,
+        isPaid: true,
+      },
+      {
+        marketID: User.marketID,
+        pupID: pups[1],
+        status: 'КР_ОТПРАВЛЕНО',
+        dimensions: 'test',
+        weight: 10,
+        price: 200,
+        isPaid: true,
+      },
+      {
+        user: User._id,
+        marketID: User.marketID,
+        pupID: pups[2],
+        status: 'КР_ОТПРАВЛЕНО',
+        dimensions: 'test',
+        weight: 7,
+        price: 150,
+        isPaid: true,
+      },
+      {
+        user: User._id,
+        marketID: User.marketID,
+        pupID: pups[3],
+        status: 'КР_ОТПРАВЛЕНО',
+        dimensions: 'test',
+        weight: 7,
+        price: 250,
+        isPaid: true,
+      },
+      {
+        user: User._id,
+        marketID: User.marketID,
+        pupID: pups[4],
+        status: 'КР_ОТПРАВЛЕНО',
+        dimensions: 'test',
+        weight: 732,
+        price: 100,
+        isPaid: true,
+      },
+      {
+        user: User._id,
+        marketID: User.marketID,
+        pupID: pups[5],
+        status: 'КР_ОТПРАВЛЕНО',
+        dimensions: 'test',
+        weight: 7,
+        price: 103,
+        isPaid: true,
+      },
+      {
+        user: User._id,
+        marketID: User.marketID,
+        pupID: pups[6],
+        status: 'КР_ОТПРАВЛЕНО',
+        dimensions: 'test',
+        weight: 7,
+        price: 503,
+        isPaid: true,
+      },
+    ]);
+
     await User.create([
       {
         email: 'test_admin@gmail.com',
