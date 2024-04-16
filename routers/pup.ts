@@ -19,10 +19,10 @@ pupRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, nex
 
         const pup = new Pup(pupData);
         await pup.save();
-        return send({message: 'Pup is correctly added!', pup});
+        return res.send({message: 'Pup is correctly added!', pup});
     } catch (e) {
         if (e instanceof mongoose.Error.ValidationError) {
-            return status(422).send(e);
+            return res.status(422).send(e);
         }
         next(e);
     }

@@ -12,7 +12,7 @@ shipmentsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
   try {
     const shipment = new Shipment({
-      user: user._id,
+      user: user?._id,
       marketID: req.body.marketID,
       pupID: req.body.pupID,
       status: req.body.status,
