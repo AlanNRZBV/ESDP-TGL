@@ -60,7 +60,7 @@ pupsRouter.put('/:id', auth, permit('admin'), async (_req, res) => {
     pup.isChina = !pup.isChina;
     await pup.save();
 
-    res.send({ message: 'PUP status toggled successfully' });
+    res.send({ message: 'PUPs status toggled successfully' });
   } catch (e) {
     res.status(500).send({ error: 'Internal Server Error' });
   }
