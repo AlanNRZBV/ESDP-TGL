@@ -1,5 +1,5 @@
 import {Schema, model, Types} from "mongoose";
-import User from "./User";
+import User from './User';
 
 const ShipmentHistorySchema = new Schema({
   userId: {
@@ -12,8 +12,8 @@ const ShipmentHistorySchema = new Schema({
     },
   },
   shipments: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Shipment',
+      type: Schema.Types.ObjectId,
+      ref: 'Shipment',
   }],
 });
 

@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { HydratedDocument } from 'mongoose';
 import User from '../models/User';
+<<<<<<< HEAD
 import {UserFields} from "../user.type";
+=======
+import { UserFields } from '../user.type';
+>>>>>>> TGL-38
 
 export interface RequestWithUser extends Request {
   user?: HydratedDocument<UserFields>;
