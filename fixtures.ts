@@ -1,9 +1,12 @@
+import Price from './models/Price';
+import crypto from 'crypto';
 import mongoose from 'mongoose';
 import config from './config';
 import User from './models/User';
 import Pup from './models/Pup';
 import Shipment from './models/Shipment';
 import Warehouse from './models/Warehouse';
+
 const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
   try {
     await db.dropCollection(collectionName);
@@ -17,7 +20,7 @@ const run = async () => {
     await mongoose.connect(config.mongoose.db);
     const db = mongoose.connection;
 
-    const collections = ['users', 'pups', 'warehouses'];
+    const collections = ['users', 'pups', 'warehouses', 'prices'];
 
     for (const collectionName of collections) {
       await dropCollection(db, collectionName);
@@ -255,6 +258,13 @@ const run = async () => {
         weight: 7,
         price: 503,
         isPaid: true,
+      },
+    ]);
+
+    await Price.create([
+      {
+        price: 2100,
+        exchange: 88,
       },
     ]);
 
