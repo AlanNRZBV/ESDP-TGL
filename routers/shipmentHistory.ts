@@ -1,9 +1,9 @@
-import {Router} from "express";
-import {Types} from "mongoose";
-import User from "../models/User";
-import auth, {RequestWithUser} from "../middleware/auth";
-import ShipmentHistory from "../models/ShipmentHistory";
-import permit from "../middleware/permit";
+import { Router } from 'express';
+import { Types } from 'mongoose';
+import User from '../models/User';
+import auth, { RequestWithUser } from '../middleware/auth';
+import ShipmentHistory from '../models/ShipmentHistory';
+import permit from '../middleware/permit';
 
 const shipmentHistoryRouter = Router();
 
@@ -29,7 +29,7 @@ shipmentHistoryRouter.get('/:id', auth, async (req: RequestWithUser, res, next) 
     try {
       _id = new Types.ObjectId(req.params.id);
     } catch {
-      return res.status(422).send({error: 'Wrong objectId!'});
+      return res.status(422).send({ error: 'Wrong objectId!' });
     }
 
     const shipmentHistory = await ShipmentHistory.findById(_id);
