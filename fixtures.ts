@@ -184,8 +184,6 @@ const run = async () => {
 
     await Shipment.create([
       {
-        userShipId: User._id,
-        marketID: User.marketID,
         user: users[3],
         marketShipID: users[3].marketId,
         pupID: pups[0],
@@ -196,8 +194,6 @@ const run = async () => {
         isPaid: true,
       },
       {
-        userShipId: User._id,
-        marketID: User.marketID,
         user: users[1],
         marketShipID: users[1].marketId,
         pupID: pups[1],
@@ -208,8 +204,6 @@ const run = async () => {
         isPaid: true,
       },
       {
-        userShipId: User._id,
-        marketID: User.marketID,
         user: users[3],
         marketShipID: users[3].marketId,
         pupID: pups[2],
@@ -220,8 +214,6 @@ const run = async () => {
         isPaid: true,
       },
       {
-        userShipId: User._id,
-        marketID: User.marketID,
         user: users[4],
         marketShipID: users[4].marketId,
         pupID: pups[3],
@@ -232,8 +224,6 @@ const run = async () => {
         isPaid: true,
       },
       {
-        userShipId: User._id,
-        marketID: User.marketID,
         user: users[0],
         marketShipID: users[0].marketId,
         pupID: pups[4],
@@ -244,10 +234,8 @@ const run = async () => {
         isPaid: true,
       },
       {
-        userShipId: User._id,
-        marketID: User.marketID,
         user: users[0],
-        marketShipID: users[0].marketId,
+        marketID: users[0].marketId,
         pupID: pups[5],
         status: 'КР_ОТПРАВЛЕНО',
         dimensions: 'test',
@@ -256,8 +244,6 @@ const run = async () => {
         isPaid: true,
       },
       {
-        userShipId: User._id,
-        marketID: User.marketID,
         user: users[6],
         marketShipID: users[6].marketId,
         pupID: pups[6],

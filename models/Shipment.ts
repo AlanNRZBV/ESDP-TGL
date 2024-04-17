@@ -5,7 +5,7 @@ import PUP from './Pup';
 const Schema = mongoose.Schema;
 
 const ShipmentSchema = new Schema({
-  userShipId: {
+  userId: {
     type: mongoose.Types.ObjectId,
     ref: 'User',
     required: true,
@@ -15,7 +15,7 @@ const ShipmentSchema = new Schema({
     },
   },
 
-  marketShipID: {
+  marketID: {
     ref: 'User',
     type: mongoose.Types.ObjectId,
     required: true,
