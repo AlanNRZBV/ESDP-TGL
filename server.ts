@@ -5,6 +5,7 @@ import config from './config';
 import {pupRouter} from "./routers/pup";
 import usersRouter from "./routers/users";
 import shipmentsRouter from './routers/shipments';
+import warehouseRouter from './routers/warehouse';
 
 const app = express();
 const port = 8000;
@@ -16,6 +17,7 @@ app.use(cors());
 app.use('/users', usersRouter);
 app.use('/shipments', shipmentsRouter);
 app.use('/pups', pupRouter);
+app.use('/warehouse', warehouseRouter);
 
 const run = async () => {
   await mongoose.connect(config.mongoose.db);
