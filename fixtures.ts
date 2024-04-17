@@ -3,6 +3,9 @@ import config from './config';
 import User from './models/User';
 import Pup from './models/Pup';
 import Shipment from './models/Shipment';
+import Price from './models/Price';
+import crypto from 'crypto';
+
 const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
   try {
     await db.dropCollection(collectionName);
@@ -16,7 +19,7 @@ const run = async () => {
     await mongoose.connect(config.mongoose.db);
     const db = mongoose.connection;
 
-    const collections = ['users', 'pups'];
+    const collections = ['users', 'pups', 'prices'];
 
     for (const collectionName of collections) {
       await dropCollection(db, collectionName);
@@ -30,48 +33,42 @@ const run = async () => {
         address: 'пр.Манаса 44',
         isChina: false,
         phoneNumber: '996505999774',
-      },
-      {
+      }, {
         name: 'Pup№2',
         region: 'Таласская',
         settlement: 'г.Талас',
         address: 'ул. Бердике Баатыра 191',
         isChina: false,
         phoneNumber: '996505999774',
-      },
-      {
+      }, {
         name: 'Pup№3',
         region: 'Иссык-Кульская',
         settlement: 'г.Каракол',
         address: 'ул.Ленина 186/1',
         isChina: false,
         phoneNumber: '996505999774',
-      },
-      {
+      }, {
         name: 'Pup№4',
         region: 'Нарынская',
         settlement: 'г.Нарын',
         address: 'ул.Чаначева 15',
         isChina: false,
         phoneNumber: '996505999774',
-      },
-      {
+      }, {
         name: 'Pup№5',
         region: 'Джалал-Абадская',
         settlement: 'г.Джалал-Абад',
         address: 'ул.Кыргызской Республики 79',
         isChina: false,
         phoneNumber: '996505999774',
-      },
-      {
+      }, {
         name: 'Pup№6',
         region: 'Ошская',
         settlement: 'г.Ош',
         address: 'ул.Гапара Айтиева 45а',
         isChina: false,
         phoneNumber: '996505999774',
-      },
-      {
+      }, {
         name: 'Pup№7',
         region: 'Баткенская',
         settlement: 'г.Баткен',
@@ -180,6 +177,8 @@ const run = async () => {
 
     await Shipment.create([
       {
+        user: User._id,
+        marketID: User.marketID,
         user: users[3],
         marketID: users[3].marketId,
         pupID: pups[0],
@@ -188,8 +187,8 @@ const run = async () => {
         weight: 1,
         price: 250,
         isPaid: true,
-      },
-      {
+      }, {
+        marketID: User.marketID,
         user: users[1],
         marketID: users[1].marketId,
         pupID: pups[1],
@@ -198,8 +197,9 @@ const run = async () => {
         weight: 10,
         price: 200,
         isPaid: true,
-      },
-      {
+      }, {
+        user: User._id,
+        marketID: User.marketID,
         user: users[3],
         marketID: users[3].marketId,
         pupID: pups[2],
@@ -208,8 +208,9 @@ const run = async () => {
         weight: 7,
         price: 150,
         isPaid: true,
-      },
-      {
+      }, {
+        user: User._id,
+        marketID: User.marketID,
         user: users[4],
         marketID: users[4].marketId,
         pupID: pups[3],
@@ -218,8 +219,9 @@ const run = async () => {
         weight: 7,
         price: 250,
         isPaid: true,
-      },
-      {
+      }, {
+        user: User._id,
+        marketID: User.marketID,
         user: users[0],
         marketID: users[0].marketId,
         pupID: pups[4],
@@ -228,8 +230,9 @@ const run = async () => {
         weight: 732,
         price: 100,
         isPaid: true,
-      },
-      {
+      }, {
+        user: User._id,
+        marketID: User.marketID,
         user: users[0],
         marketID: users[0].marketId,
         pupID: pups[5],
@@ -238,8 +241,9 @@ const run = async () => {
         weight: 7,
         price: 103,
         isPaid: true,
-      },
-      {
+      }, {
+        user: User._id,
+        marketID: User.marketID,
         user: users[6],
         marketID: users[6].marketId,
         pupID: pups[6],
@@ -248,6 +252,13 @@ const run = async () => {
         weight: 7,
         price: 503,
         isPaid: true,
+      },
+    ]);
+
+    await Price.create([
+      {
+        price: 2100,
+        exchange: 88,
       },
     ]);
 
