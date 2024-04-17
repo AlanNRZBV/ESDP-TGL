@@ -19,7 +19,7 @@ pupsRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, ne
       phoneNumber: req.body.phoneNumber,
     });
     await pup.save();
-    return res.send({ message: 'Pup is correctly added!', pup });
+    return res.send({ message: 'Pups is correctly added!', pup });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(e);
