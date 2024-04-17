@@ -6,7 +6,7 @@ import {WarehouseTypes} from '../warehouse.types'
 
 const warehouseRouter = Router();
 
-warehouseRouter.get('/',auth,permit('admin'), async (req, res, next) => {
+warehouseRouter.get('/',auth,permit('super'), async (req, res, next) => {
   try {
     const warehouse = await Warehouse.find()
     if(warehouse.length < 1){
@@ -18,7 +18,7 @@ warehouseRouter.get('/',auth,permit('admin'), async (req, res, next) => {
   }
 })
 
-warehouseRouter.post('/add', auth,permit('admin'), async (req, res, next)=>{
+warehouseRouter.post('/add', auth,permit('super'), async (req, res, next)=>{
   try{
     const newWarehouse: WarehouseTypes = {
       name: req.body.name,
