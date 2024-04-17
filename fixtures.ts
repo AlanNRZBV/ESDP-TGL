@@ -178,7 +178,7 @@ const run = async () => {
       },
     ]);
 
-    const shipments = await Shipment.create([
+    await Shipment.create([
       {
         user: users[3],
         marketID: users[3].marketId,
