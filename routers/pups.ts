@@ -8,11 +8,11 @@ import auth, { RequestWithUser } from '../middleware/auth';
 export const pupsRouter = Router();
 
 pupsRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, next) => {
-  const PUPNAME = 'ПВЗ№';
-  const PUPNUMBER = (await PUP.find()).length;
+  const pupName = 'ПВЗ№';
+  const pupNumber = (await PUP.find()).length;
   try {
     const pup = new Pup({
-      name: PUPNAME + (PUPNUMBER + 1),
+      name: pupName + (pupNumber + 1),
       region: req.body.region,
       settlement: req.body.settlement,
       address: req.body.address,
