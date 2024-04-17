@@ -2,10 +2,10 @@ import cors from 'cors';
 import express from 'express';
 import mongoose from 'mongoose';
 import config from './config';
-import {pupRouter} from "./routers/pup";
-import usersRouter from "./routers/users";
+import { pupRouter } from './routers/pup';
+import usersRouter from './routers/users';
 import shipmentsRouter from './routers/shipments';
-import warehouseRouter from './routers/warehouse';
+import warehouseRouter from './routers/warehouses';
 
 const app = express();
 const port = 8000;

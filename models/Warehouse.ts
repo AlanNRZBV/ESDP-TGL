@@ -1,19 +1,19 @@
 import { model, Schema } from 'mongoose';
 
 const WarehouseSchema = new Schema({
-  name:{
+  name: {
     type: String,
-    required: true
+    required: true,
   },
-  address:{
+  address: {
     type: String,
-    required: true
+    required: true,
   },
-  phoneNumber:{
+  phoneNumber: {
     type: String,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 
 const Warehouse = model('Warehouse', WarehouseSchema);
 export default Warehouse;
