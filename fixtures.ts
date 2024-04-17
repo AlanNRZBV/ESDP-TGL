@@ -1,11 +1,11 @@
 import Price from './models/Price';
 import crypto from 'crypto';
-
 import mongoose from 'mongoose';
 import config from './config';
 import User from './models/User';
 import Pup from './models/Pup';
 import Shipment from './models/Shipment';
+import Warehouse from './models/Warehouse';
 
 const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
   try {
@@ -20,11 +20,17 @@ const run = async () => {
     await mongoose.connect(config.mongoose.db);
     const db = mongoose.connection;
 
-    const collections = ['users', 'pups', 'prices'];
+    const collections = ['users', 'pups', 'warehouses', 'prices'];
 
     for (const collectionName of collections) {
       await dropCollection(db, collectionName);
     }
+
+    await Warehouse.create({
+      name: '特米TECH',
+      address: '广东省佛山市南海区里水镇得胜村横五路5号103仓-AFZUV—',
+      phoneNumber: '17324524246',
+    });
 
     const pups = await Pup.create([
       {
@@ -185,7 +191,7 @@ const run = async () => {
     await Shipment.create([
       {
         user: users[3],
-        marketShipID: users[3].marketId,
+        marketID: users[3].marketId,
         pupID: pups[0],
         status: 'КР_ОТПРАВЛЕНО',
         dimensions: 'test',
@@ -195,7 +201,7 @@ const run = async () => {
       },
       {
         user: users[1],
-        marketShipID: users[1].marketId,
+        marketID: users[1].marketId,
         pupID: pups[1],
         status: 'КР_ОТПРАВЛЕНО',
         dimensions: 'test',
@@ -205,7 +211,7 @@ const run = async () => {
       },
       {
         user: users[3],
-        marketShipID: users[3].marketId,
+        marketID: users[3].marketId,
         pupID: pups[2],
         status: 'КР_ОТПРАВЛЕНО',
         dimensions: 'test',
@@ -215,7 +221,7 @@ const run = async () => {
       },
       {
         user: users[4],
-        marketShipID: users[4].marketId,
+        marketID: users[4].marketId,
         pupID: pups[3],
         status: 'КР_ОТПРАВЛЕНО',
         dimensions: 'test',
@@ -225,7 +231,7 @@ const run = async () => {
       },
       {
         user: users[0],
-        marketShipID: users[0].marketId,
+        marketID: users[0].marketId,
         pupID: pups[4],
         status: 'КР_ОТПРАВЛЕНО',
         dimensions: 'test',
@@ -245,7 +251,7 @@ const run = async () => {
       },
       {
         user: users[6],
-        marketShipID: users[6].marketId,
+        marketID: users[6].marketId,
         pupID: pups[6],
         status: 'КР_ОТПРАВЛЕНО',
         dimensions: 'test',

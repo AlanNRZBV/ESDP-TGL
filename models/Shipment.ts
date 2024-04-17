@@ -5,7 +5,7 @@ import PUP from './Pup';
 const Schema = mongoose.Schema;
 
 const ShipmentSchema = new Schema({
-  userId: {
+  user: {
     type: mongoose.Types.ObjectId,
     ref: 'User',
     required: true,
@@ -16,8 +16,8 @@ const ShipmentSchema = new Schema({
   },
 
   marketID: {
-    ref: 'User',
     type: mongoose.Types.ObjectId,
+    ref: 'User',
     required: true,
     validate: {
       validator: async (value: mongoose.Types.ObjectId) => await User.findById(value),
