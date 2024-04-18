@@ -1,10 +1,11 @@
+import Price from './models/Price';
+import crypto from 'crypto';
 import mongoose from 'mongoose';
 import config from './config';
 import User from './models/User';
 import Pup from './models/Pup';
 import Shipment from './models/Shipment';
-import crypto from 'crypto';
-import Price from './models/Price';
+import Warehouse from './models/Warehouse';
 
 const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
   try {
@@ -19,11 +20,17 @@ const run = async () => {
     await mongoose.connect(config.mongoose.db);
     const db = mongoose.connection;
 
-    const collections = ['users', 'pups', 'prices'];
+    const collections = ['users', 'pups', 'warehouses', 'prices'];
 
     for (const collectionName of collections) {
       await dropCollection(db, collectionName);
     }
+
+    await Warehouse.create({
+      name: '特米TECH',
+      address: '广东省佛山市南海区里水镇得胜村横五路5号103仓-AFZUV—',
+      phoneNumber: '17324524246',
+    });
 
     const pups = await Pup.create([
       {
@@ -183,8 +190,6 @@ const run = async () => {
 
     await Shipment.create([
       {
-        user: User._id,
-        marketID: User.marketID,
         user: users[3],
         marketID: users[3].marketId,
         pupID: pups[0],
@@ -195,7 +200,6 @@ const run = async () => {
         isPaid: true,
       },
       {
-        marketID: User.marketID,
         user: users[1],
         marketID: users[1].marketId,
         pupID: pups[1],
@@ -206,8 +210,6 @@ const run = async () => {
         isPaid: true,
       },
       {
-        user: User._id,
-        marketID: User.marketID,
         user: users[3],
         marketID: users[3].marketId,
         pupID: pups[2],
@@ -218,8 +220,6 @@ const run = async () => {
         isPaid: true,
       },
       {
-        user: User._id,
-        marketID: User.marketID,
         user: users[4],
         marketID: users[4].marketId,
         pupID: pups[3],
@@ -230,8 +230,6 @@ const run = async () => {
         isPaid: true,
       },
       {
-        user: User._id,
-        marketID: User.marketID,
         user: users[0],
         marketID: users[0].marketId,
         pupID: pups[4],
@@ -242,8 +240,6 @@ const run = async () => {
         isPaid: true,
       },
       {
-        user: User._id,
-        marketID: User.marketID,
         user: users[0],
         marketID: users[0].marketId,
         pupID: pups[5],
@@ -254,8 +250,6 @@ const run = async () => {
         isPaid: true,
       },
       {
-        user: User._id,
-        marketID: User.marketID,
         user: users[6],
         marketID: users[6].marketId,
         pupID: pups[6],
