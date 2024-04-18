@@ -187,7 +187,7 @@ const run = async () => {
         address: 'Чуйкова 122',
       },
     ]);
-
+    
     await Shipment.create([
       {
         user: users[3],
@@ -267,7 +267,7 @@ const run = async () => {
         deliveryPrice: 5,
       },
     ]);
-
+    
     await db.close();
   } catch (error) {
     console.error('Error:', error);

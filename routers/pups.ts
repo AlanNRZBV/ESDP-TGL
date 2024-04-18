@@ -28,7 +28,7 @@ pupsRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, ne
   }
 });
 
-pupsRouter.get('/', auth, permit('admin'), async (_req, res, next) => {
+pupsRouter.get('/', async (_req, res, next) => {
   try {
     const pups = await PUP.find();
     return res.send(pups);

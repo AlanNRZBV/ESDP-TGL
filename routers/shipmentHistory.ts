@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { Types } from 'mongoose';
+import User from '../models/User';
 import auth, { RequestWithUser } from '../middleware/auth';
 import ShipmentHistory from '../models/ShipmentHistory';
 import permit from '../middleware/permit';

@@ -16,13 +16,13 @@ usersRouter.post('/', async (req, res, next) => {
       region: req.body.region,
       phoneNumber: req.body.phoneNumber,
       address: req.body.address,
-      settlement: req.body.settlement,
+      settlement: req.body.settlement
     });
 
     user.generateMarketID();
     user.generateToken();
     await user.save();
-    return res.send({ message: 'OK!', user });
+    return res.send({message: 'OK!', user});
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(e);
@@ -42,22 +42,22 @@ usersRouter.get('/', async (req, res, next) => {
 
 usersRouter.post('/sessions', async (req, res, next) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({email: req.body.email});
 
     if (!user) {
-      return res.status(422).send({ error: 'User not found!' });
+      return res.status(422).send({error: 'User not found!'});
     }
 
     const isMatch = await user.checkPassword(req.body.password);
 
     if (!isMatch) {
-      return res.status(422).send({ error: 'Password is wrong!' });
+      return res.status(422).send({error: 'Password is wrong!'});
     }
 
     user.generateToken();
     await user.save();
 
-    return res.send({ message: 'Email and password are correct!', user });
+    return res.send({message: 'Email and password are correct!', user});
   } catch (e) {
     next(e);
   }
@@ -66,7 +66,7 @@ usersRouter.post('/sessions', async (req, res, next) => {
 usersRouter.delete('/sessions', async (req, res, next) => {
   try {
     const headerValue = req.get('Authorization');
-    const successMessage = { message: 'Success!' };
+    const successMessage = {message: 'Success!'};
 
     if (!headerValue) {
       return res.send(successMessage);
@@ -78,7 +78,7 @@ usersRouter.delete('/sessions', async (req, res, next) => {
       return res.send(successMessage);
     }
 
-    const user = await User.findOne({ token });
+    const user = await User.findOne({token});
 
     if (!user) {
       return res.send(successMessage);

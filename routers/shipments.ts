@@ -11,7 +11,7 @@ shipmentsRouter.post('/', auth, permit('admin'), async (req, res, next) => {
 
   try {
     const shipment = new Shipment({
-      userId: user?._id,
+      user: user?._id,
       userMarketId: req.body.userMarketId,
       pupId: req.body.pupId,
       status: req.body.status,
