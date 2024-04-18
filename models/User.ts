@@ -38,8 +38,8 @@ const UserSchema = new mongoose.Schema({
     ref: 'PUP',
     required: true,
     validate: async (value: Types.ObjectId) => {
-      const artist = await PUP.findById(value);
-      return Boolean(artist);
+      const pup = await PUP.findById(value);
+      return Boolean(pup);
     },
   },
   firstName: {
@@ -63,10 +63,23 @@ const UserSchema = new mongoose.Schema({
     validate: {
       validator: function (phoneNumber: string) {
         try {
-          const parsedPhoneNumber = phoneUtil.parse(phoneNumber, 'KG');
-          const countryCode = parsedPhoneNumber.getCountryCode();
-          const nationalNumber = parsedPhoneNumber.getNationalNumber();
-          return countryCode === 996 && nationalNumber?.toString().length === 9;
+          const parsedPhoneNumberKG = phoneUtil.parse(phoneNumber, 'KG');
+          const parsedPhoneNumberRU = phoneUtil.parse(phoneNumber, 'RU');
+          const parsedPhoneNumberKZ = phoneUtil.parse(phoneNumber, 'KZ');
+
+          const countryCodeKG = parsedPhoneNumberKG.getCountryCode();
+          const countryCodeRU = parsedPhoneNumberRU.getCountryCode();
+          const countryCodeKZ = parsedPhoneNumberKZ.getCountryCode();
+
+          const nationalNumberKG = parsedPhoneNumberKG.getNationalNumber();
+          const nationalNumberRU = parsedPhoneNumberRU.getNationalNumber();
+          const nationalNumberKZ = parsedPhoneNumberKZ.getNationalNumber();
+
+          return (
+            (countryCodeKG === 996 && nationalNumberKG?.toString().length === 9) ||
+            (countryCodeRU === 7 && nationalNumberRU?.toString().length === 11) ||
+            (countryCodeKZ === 7 && nationalNumberKZ?.toString().length === 10)
+          );
         } catch (error) {
           return false;
         }
@@ -87,13 +100,21 @@ const UserSchema = new mongoose.Schema({
   role: {
     type: String,
     required: true,
-    enum: ['client', 'admin', 'manager'],
+    enum: ['client', 'admin', 'manager', 'super'],
     default: 'client',
   },
   region: {
     type: String,
     required: true,
-    enum: ['Баткен', 'Джалал-Абад', 'Иссык-Куль', 'Нарын', 'Ош', 'Талас', 'Чуй'],
+    enum: [
+      'Чуйская',
+      'Иссык-Кульская',
+      'Таласская',
+      'Нарынская',
+      'Джалал-Абадская',
+      'Ошская',
+      'Баткенская',
+    ],
   },
 });
 
