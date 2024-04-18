@@ -1,4 +1,4 @@
 export interface PriceType {
-  price: number;
-  exchange: number;
+  exchangeRate: number;
+  deliveryPrice: number;
 }

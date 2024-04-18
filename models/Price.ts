@@ -1,11 +1,11 @@
 import { model, Schema } from 'mongoose';
 
 const PriceSchema = new Schema({
-  price: {
+  exchangeRate: {
     type: Number,
     required: true,
   },
-  exchange: {
+  deliveryPrice: {
     type: Number,
     required: true,
   },

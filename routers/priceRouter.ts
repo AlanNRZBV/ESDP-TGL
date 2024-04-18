@@ -16,17 +16,21 @@ priceRouter.get('/', auth, permit('super', 'admin'), async (_req, res, next) => 
   }
 });
 
-priceRouter.post('/', auth, permit('super'), async (req, res, next) => {
+priceRouter.post('/', auth, permit('super', 'admin'), async (req, res, next) => {
   try {
-    const price: PriceType = {
-      price: parseFloat(req.body.price),
-      exchange: parseFloat(req.body.exchange),
-    };
+    const existingPrice = await Price.findOne();
 
-    const priceData = new Price(price);
-    await priceData.save();
-
-    return res.send(priceData);
+    if (!existingPrice) {
+      const price: PriceType = {
+        exchangeRate: parseFloat(req.body.exchangeRate),
+        deliveryPrice: parseFloat(req.body.deliveryPrice),
+      };
+      const priceData = new Price(price);
+      await priceData.save();
+      return res.send(priceData);
+    } else {
+      return res.send({ message: 'В базе данных может быть только одна ценовая категория' });
+    }
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(e);
@@ -47,12 +51,12 @@ priceRouter.put('/:id', auth, permit('super', 'admin'), async (req, res, next) =
     }
 
     const newPrice = await Price.findByIdAndUpdate(
-        priceId,
-        {
-          price: req.body.price,
-          exchange: req.body.exchange,
-        },
-        { new: true },
+      priceId,
+      {
+        exchangeRate: parseFloat(req.body.exchangeRate),
+        deliveryPrice: parseFloat(req.body.deliveryPrice),
+      },
+      { new: true },
     );
 
     return res.send({ message: 'Цена успешно обновлена', newPrice });
