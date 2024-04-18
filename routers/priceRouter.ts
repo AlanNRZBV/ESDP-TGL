@@ -7,7 +7,7 @@ import { PriceType } from '../types/price.types';
 
 export const priceRouter = Router();
 
-priceRouter.get('/', auth, permit('admin', 'manager'), async (_req, res, next) => {
+priceRouter.get('/', auth, permit('super', 'admin'), async (_req, res, next) => {
   try {
     const priceData = await Price.findOne();
     return res.send(priceData);
@@ -16,17 +16,21 @@ priceRouter.get('/', auth, permit('admin', 'manager'), async (_req, res, next) =
   }
 });
 
-priceRouter.post('/', auth, permit('admin', 'manager'), async (req, res, next) => {
+priceRouter.post('/', auth, permit('super', 'admin'), async (req, res, next) => {
   try {
-    const price: PriceType = {
-      price: parseFloat(req.body.price),
-      exchange: parseFloat(req.body.exchange),
-    };
+    const existingPrice = await Price.findOne();
 
-    const priceData = new Price(price);
-    await priceData.save();
-
-    return res.send(priceData);
+    if (!existingPrice) {
+      const price: PriceType = {
+        exchangeRate: parseFloat(req.body.exchangeRate),
+        deliveryPrice: parseFloat(req.body.deliveryPrice),
+      };
+      const priceData = new Price(price);
+      await priceData.save();
+      return res.send(priceData);
+    } else {
+      return res.send({ message: 'В базе данных может быть только одна ценовая категория' });
+    }
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(e);
@@ -36,7 +40,7 @@ priceRouter.post('/', auth, permit('admin', 'manager'), async (req, res, next) =
   }
 });
 
-priceRouter.put('/:id', auth, permit('admin', 'manager'), async (req, res, next) => {
+priceRouter.put('/:id', auth, permit('super', 'admin'), async (req, res, next) => {
   try {
     const priceId = req.params.id;
 
@@ -49,8 +53,8 @@ priceRouter.put('/:id', auth, permit('admin', 'manager'), async (req, res, next)
     const newPrice = await Price.findByIdAndUpdate(
       priceId,
       {
-        price: req.body.price,
-        exchange: req.body.exchange,
+        exchangeRate: parseFloat(req.body.exchangeRate),
+        deliveryPrice: parseFloat(req.body.deliveryPrice),
       },
       { new: true },
     );

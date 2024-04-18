@@ -263,8 +263,8 @@ const run = async () => {
 
     await Price.create([
       {
-        price: 2100,
-        exchange: 88,
+        exchangeRate: 88,
+        deliveryPrice: 5,
       },
     ]);
 
