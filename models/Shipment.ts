@@ -1,49 +1,67 @@
-import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import User from './User';
 import PUP from './Pup';
+import { ShipmentData } from '../types/shipment.types';
 
 const Schema = mongoose.Schema;
 
-const ShipmentSchema = new Schema({
-  user: {
-    type: mongoose.Types.ObjectId,
+const ShipmentSchema = new Schema<ShipmentData>({
+  userId: {
+    type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
     validate: {
-      validator: async (value: mongoose.Types.ObjectId) => await User.findById(value),
-      message: 'User does not exist',
+      validator: async (value: Types.ObjectId) => {
+        const user = await User.findById(value);
+        return Boolean(user);
+      },
+      message: 'User does not exist!',
     },
   },
 
-  marketID: {
-    type: mongoose.Types.ObjectId,
-    ref: 'User',
+  userMarketId: {
+    type: Number,
     required: true,
-    validate: {
-      validator: async (value: mongoose.Types.ObjectId) => await User.findById(value),
-      message: 'User market id does not exist',
-    },
   },
 
-  pupID: {
-    type: mongoose.Types.ObjectId,
+  pupId: {
+    type: Schema.Types.ObjectId,
     ref: 'PUP',
-    required: true,
+    required: function () {
+      return !(this.status === 'КНР_ПРИБЫЛО' || this.status === 'КНР_ОТПРАВЛЕНО');
+    },
     validate: {
-      validator: async (value: mongoose.Types.ObjectId) => await PUP.findById(value),
-      message: 'Pup does not exist',
+      validator: async function (this: ShipmentData, value: Types.ObjectId) {
+        if (this.status !== 'КНР_ПРИБЫЛО' && this.status !== 'КНР_ОТПРАВЛЕНО') {
+          const pup = await PUP.findById(value);
+          return Boolean(pup);
+        }
+        return true;
+      },
+      message: 'Такого ПВЗ нет в списке',
     },
   },
 
   status: {
     type: String,
     required: true,
-    enum: ['КР_ОТПРАВЛЕНО', 'КР_ПРИБЫЛО', 'КНР_ОТПРАВЛЕНО', 'КНР_ПРИБЫЛО'],
+    enum: ['КР_ОТПРАВЛЕНО', 'КР_ПРИБЫЛО', 'КНР_ОТПРАВЛЕНО', 'КНР_ПРИБЫЛО', 'ЗАВЕРШЕН', 'ОТКАЗ'],
+    default: 'КНР_ПРИБЫЛО',
   },
 
   dimensions: {
-    type: String,
-    required: true,
+    height: {
+      type: Number,
+      required: true,
+    },
+    width: {
+      type: Number,
+      required: true,
+    },
+    length: {
+      type: Number,
+      required: true,
+    },
   },
 
   weight: {
@@ -52,6 +70,17 @@ const ShipmentSchema = new Schema({
   },
 
   price: {
+    usd: {
+      type: Number,
+      required: true,
+    },
+    som: {
+      type: Number,
+      required: true,
+    },
+  },
+
+  trackerNumber: {
     type: Number,
     required: true,
   },
