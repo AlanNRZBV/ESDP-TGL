@@ -244,6 +244,7 @@ const run = async () => {
         userId: users[5]._id,
         marketId: users[5].marketId,
         status: 'КР_ПРИБЫЛО',
+        pupId: pups[0]._id,
         dimensions: {
           height: 1020,
           width: 1030,
@@ -257,6 +258,7 @@ const run = async () => {
         userId: users[5]._id,
         marketId: users[5].marketId,
         status: 'КР_ОТПРАВЛЕНО',
+        pupId: pups[2]._id,
         dimensions: {
           height: 1020,
           width: 1030,
@@ -269,6 +271,7 @@ const run = async () => {
       {
         userId: users[6]._id,
         marketId: users[6].marketId,
+        pupId: pups[4]._id,
         status: 'ЗАВЕРШЕН',
         dimensions: {
           height: 1020,
@@ -283,6 +286,7 @@ const run = async () => {
         userId: users[6]._id,
         marketId: users[6].marketId,
         status: 'ОТКАЗ',
+        pupId: pups[5]._id,
         dimensions: {
           height: 1020,
           width: 1030,
