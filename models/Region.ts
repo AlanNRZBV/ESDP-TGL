@@ -5,6 +5,11 @@ const RegionSchema = new Schema({
     type: String,
     required: true,
   },
+  lang: {
+    type: String,
+    required: true,
+    enum: ['ru', 'kg', 'eng'],
+  },
 });
 
 const Region = model('Region', RegionSchema);

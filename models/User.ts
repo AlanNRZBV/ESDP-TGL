@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto';
 import { PhoneNumberUtil } from 'google-libphonenumber';
 import { UserFields, UserModel } from '../user.type';
 import PUP from './Pup';
+import Region from './Region';
 
 const SALT_WORK_fACTOR = 10;
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -104,17 +105,16 @@ const UserSchema = new mongoose.Schema({
     default: 'client',
   },
   region: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'Region',
     required: true,
-    enum: [
-      'Чуйская',
-      'Иссык-Кульская',
-      'Таласская',
-      'Нарынская',
-      'Джалал-Абадская',
-      'Ошская',
-      'Баткенская',
-    ],
+    validator: {
+      validate: async (value: Types.ObjectId) => {
+        const region = await Region.findById(value);
+        return Boolean(region);
+      },
+      message: 'VALIDATOR ERROR: Region does not exist!',
+    },
   },
 });
 

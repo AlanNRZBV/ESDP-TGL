@@ -7,6 +7,7 @@ import shipmentsRouter from './routers/shipments';
 import warehouseRouter from './routers/warehouses';
 import { priceRouter } from './routers/priceRouter';
 import pupsRouter from './routers/pups';
+import regionsRouter from './routers/regions';
 
 const app = express();
 const port = 8000;
@@ -20,6 +21,7 @@ app.use('/shipments', shipmentsRouter);
 app.use('/pups', pupsRouter);
 app.use('/warehouse', warehouseRouter);
 app.use('/price', priceRouter);
+app.use('/regions', regionsRouter);
 
 const run = async () => {
   await mongoose.connect(config.mongoose.db);
