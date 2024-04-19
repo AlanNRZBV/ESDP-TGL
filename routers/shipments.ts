@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Response } from 'express';
 import mongoose, { FilterQuery } from 'mongoose';
 import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
@@ -9,39 +9,63 @@ import PUP from '../models/Pup';
 
 const shipmentsRouter = express.Router();
 
+const countWeight = (height: number, width: number, length: number, weight: number) => {
+  let totalWeight: number;
+
+  const weightByDimensions = (height * width * length) / 6000;
+
+  if (weightByDimensions > weight) {
+    totalWeight = weightByDimensions;
+  } else {
+    totalWeight = weight;
+  }
+
+  return totalWeight;
+};
+
+const getShipmentData = async (req: RequestWithUser, res: Response) => {
+  const user = req.user;
+
+  const height = parseFloat(req.body.height);
+  const width = parseFloat(req.body.width);
+  const length = parseFloat(req.body.length);
+  const weight = parseFloat(req.body.weight);
+
+  const finalWeight = countWeight(height, width, length, weight);
+
+  const globalPrice = await Price.findOne();
+
+  if (!globalPrice) {
+    return res.status(404).send({ message: 'Укажите стоимость' });
+  }
+
+  const countPrice: ShipmentKeys = {
+    usd: finalWeight * globalPrice.deliveryPrice,
+    som: finalWeight * globalPrice.deliveryPrice * globalPrice.exchangeRate,
+  };
+
+  const getDimensions: ShipmentKeys = {
+    height,
+    width,
+    length,
+  };
+
+  return {
+    userId: user?.id,
+    userMarketId: req.body.userMarketId,
+    pupId: req.body.pupId ? req.body.pupId : null,
+    status: req.body.status,
+    dimensions: getDimensions,
+    weight: finalWeight,
+    price: countPrice,
+    trackerNumber: req.body.trackerNumber,
+    isPaid: req.body.isPaid,
+  };
+};
+
 shipmentsRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, next) => {
   try {
-    const user = req.user;
-
-    const globalPrice = await Price.findOne();
-
-    if (!globalPrice) {
-      return res.status(404).send({ message: 'Укажите стоимость' });
-    }
-
-    const countPrice: ShipmentKeys = {
-      usd: parseFloat(req.body.weight) * globalPrice.deliveryPrice,
-      som: parseFloat(req.body.weight) * globalPrice.deliveryPrice * globalPrice.exchangeRate,
-    };
-
-    const getDimensions: ShipmentKeys = {
-      height: parseFloat(req.body.height),
-      width: parseFloat(req.body.width),
-      length: parseFloat(req.body.length),
-    };
-
-    const newShipment: ShipmentData = {
-      userId: user?.id,
-      userMarketId: req.body.userMarketId,
-      pupId: req.body.pupId ? req.body.pupId : null,
-      status: req.body.status,
-      dimensions: getDimensions,
-      weight: req.body.weight,
-      price: countPrice,
-      trackerNumber: req.body.trackerNumber,
-      isPaid: req.body.isPaid,
-    };
-
+    const newShipment = await getShipmentData(req, res);
     const shipment = new Shipment(newShipment);
     await shipment.save();
     return res.send(shipment);
@@ -101,45 +125,15 @@ shipmentsRouter.put('/:id', auth, permit('admin'), async (req: RequestWithUser, 
       return res.status(404).send({ error: 'Wrong ID!' });
     }
 
-    const globalPrice = await Price.findOne();
+    const newShipment = await getShipmentData(req, res);
 
-    if (!globalPrice) {
-      return res.status(404).send({ message: 'Укажите стоимость' });
-    }
+    const shipment = await Shipment.findByIdAndUpdate(id, newShipment, { new: true });
 
-    const countPrice: ShipmentKeys = {
-      usd: parseFloat(req.body.weight) * globalPrice.deliveryPrice,
-      som: parseFloat(req.body.weight) * globalPrice.deliveryPrice * globalPrice.exchangeRate,
-    };
-
-    const getDimensions: ShipmentKeys = {
-      height: parseFloat(req.body.height),
-      width: parseFloat(req.body.width),
-      length: parseFloat(req.body.length),
-    };
-
-    const result = await Shipment.updateOne(
-      { _id: id },
-      {
-        $set: {
-          userId: req.user?.id,
-          userMarketId: req.body.userMarketId,
-          pupId: req.body.pupId ? req.body.pupId : null,
-          status: req.body.status,
-          dimensions: getDimensions,
-          weight: req.body.weight,
-          price: countPrice,
-          trackerNumber: req.body.trackerNumber,
-          isPaid: req.body.isPaid,
-        },
-      },
-    );
-
-    if (result.matchedCount === 0) {
+    if (!shipment) {
       return res.status(404).send({ message: 'Груз не найден' });
     }
 
-    return res.send({ message: 'Данные успешно обновлены' });
+    return res.send({ message: 'Данные успешно обновлены', result: shipment });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(e);
