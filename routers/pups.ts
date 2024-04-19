@@ -30,7 +30,8 @@ pupsRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, ne
 
 pupsRouter.get('/', async (_req, res, next) => {
   try {
-    const pups = await PUP.find();
+    const pups = await PUP.find().populate('region', '_id name lang');
+    console.log(pups);
     return res.send(pups);
   } catch (e) {
     next(e);
@@ -57,7 +58,6 @@ pupsRouter.put('/:id', auth, permit('admin'), async (_req, res) => {
       return res.status(404).send({ message: 'PUP id not found' });
     }
 
-    pup.isChina = !pup.isChina;
     await pup.save();
 
     res.send({ message: 'PUPs status toggled successfully' });
