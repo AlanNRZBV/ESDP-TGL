@@ -212,38 +212,47 @@ const run = async () => {
         address: 'Чуйкова 122',
       },
     ]);
-    
+
     await Shipment.create([
       {
         userId: users[3]._id,
-        marketId: users[3].marketId,
+        userMarketId: users[3].marketId,
         status: 'КНР_ПРИБЫЛО',
+        trackerNumber: 123456789,
         dimensions: {
           height: 1000,
           width: 1000,
           length: 1000,
         },
         weight: 123,
-        price: 250,
+        price: {
+          usd: 100,
+          som: 10000,
+        },
         isPaid: false,
       },
       {
         userId: users[4]._id,
-        marketId: users[4].marketId,
+        userMarketId: users[4].marketId,
         status: 'КНР_ОТПРАВЛЕНО',
+        trackerNumber: 123456788,
         dimensions: {
           height: 1020,
           width: 1030,
           length: 100,
         },
         weight: 13,
-        price: 250,
+        price: {
+          usd: 100,
+          som: 10000,
+        },
         isPaid: false,
       },
       {
         userId: users[5]._id,
-        marketId: users[5].marketId,
+        userMarketId: users[5].marketId,
         status: 'КР_ПРИБЫЛО',
+        trackerNumber: 123456787,
         pupId: pups[0]._id,
         dimensions: {
           height: 1020,
@@ -251,13 +260,17 @@ const run = async () => {
           length: 100,
         },
         weight: 13,
-        price: 250,
+        price: {
+          usd: 100,
+          som: 10000,
+        },
         isPaid: false,
       },
       {
         userId: users[5]._id,
-        marketId: users[5].marketId,
+        userMarketId: users[5].marketId,
         status: 'КР_ОТПРАВЛЕНО',
+        trackerNumber: 123456786,
         pupId: pups[2]._id,
         dimensions: {
           height: 1020,
@@ -265,27 +278,35 @@ const run = async () => {
           length: 100,
         },
         weight: 13,
-        price: 250,
+        price: {
+          usd: 100,
+          som: 10000,
+        },
         isPaid: false,
       },
       {
         userId: users[6]._id,
-        marketId: users[6].marketId,
+        userMarketId: users[6].marketId,
         pupId: pups[4]._id,
         status: 'ЗАВЕРШЕН',
+        trackerNumber: 123456785,
         dimensions: {
           height: 1020,
           width: 1030,
           length: 100,
         },
         weight: 13,
-        price: 250,
+        price: {
+          usd: 100,
+          som: 10000,
+        },
         isPaid: true,
       },
       {
         userId: users[6]._id,
-        marketId: users[6].marketId,
+        userMarketId: users[6].marketId,
         status: 'ОТКАЗ',
+        trackerNumber: 123456784,
         pupId: pups[5]._id,
         dimensions: {
           height: 1020,
@@ -293,7 +314,10 @@ const run = async () => {
           length: 100,
         },
         weight: 13,
-        price: 250,
+        price: {
+          usd: 100,
+          som: 10000,
+        },
         isPaid: false,
       },
     ]);
@@ -304,7 +328,7 @@ const run = async () => {
         deliveryPrice: 5,
       },
     ]);
-    
+
     await db.close();
   } catch (error) {
     console.error('Error:', error);
