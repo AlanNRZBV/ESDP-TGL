@@ -181,4 +181,113 @@ usersRouter.delete(
   },
 );
 
+usersRouter.put('/update', auth, async (req: RequestWithUser, res, next) => {
+  try {
+    const currentUser = req.user;
+
+    const userToUpdate = await User.findById(currentUser?.id);
+
+    if (!userToUpdate) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    await User.updateOne(
+      { _id: currentUser?._id },
+      {
+        $set: {
+          email: req.body.email,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          middleName: req.body.middleName,
+          pupID: req.body.pupID,
+          region: req.body.region,
+          phoneNumber: req.body.phoneNumber,
+          address: req.body.address,
+          settlement: req.body.settlement,
+        },
+      },
+    );
+
+    return res.send({ message: 'User updated successfully' });
+  } catch (e) {
+    next(e);
+  }
+});
+
+usersRouter.put('/:id', auth, permit('super'), async (req: RequestWithUser, res, next) => {
+  try {
+    const itemId = req.params.id;
+    let roleToUpdate = req.body.role;
+
+    const user = await User.findById(itemId);
+
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    if (user.role !== 'admin' && user.role !== 'manager') {
+      roleToUpdate = user.role;
+    }
+
+    await User.updateOne(
+      { _id: itemId },
+      {
+        $set: {
+          email: req.body.email,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          middleName: req.body.middleName,
+          pupID: req.body.pupID,
+          region: req.body.region,
+          phoneNumber: req.body.phoneNumber,
+          address: req.body.address,
+          settlement: req.body.settlement,
+          role: roleToUpdate,
+        },
+      },
+    );
+
+    return res.send({ message: 'User updated successfully' });
+  } catch (e) {
+    next(e);
+  }
+});
+
+usersRouter.put('/admin/:id', auth, permit('admin'), async (req: RequestWithUser, res, next) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    if (user.role === 'client' || user.role === 'manager') {
+      await User.updateOne(
+        { _id: userId },
+        {
+          $set: {
+            email: req.body.email,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            middleName: req.body.middleName,
+            pupID: req.body.pupID,
+            region: req.body.region,
+            phoneNumber: req.body.phoneNumber,
+            address: req.body.address,
+            settlement: req.body.settlement,
+          },
+        },
+      );
+    } else {
+      return res.status(404).send({ error: 'You cannot update this user!' });
+    }
+
+    return res.send({ message: 'User updated successfully' });
+  } catch (e) {
+    next(e);
+  }
+});
+
 export default usersRouter;
