@@ -1,11 +1,12 @@
 import Price from './models/Price';
 import crypto from 'crypto';
-
 import mongoose from 'mongoose';
 import config from './config';
 import User from './models/User';
 import Pup from './models/Pup';
 import Shipment from './models/Shipment';
+import Warehouse from './models/Warehouse';
+import Region from './models/Region';
 
 const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
   try {
@@ -20,67 +21,97 @@ const run = async () => {
     await mongoose.connect(config.mongoose.db);
     const db = mongoose.connection;
 
-    const collections = ['users', 'pups', 'prices'];
+    const collections = ['users', 'pups', 'warehouses', 'prices', 'regions', 'shipments'];
 
     for (const collectionName of collections) {
       await dropCollection(db, collectionName);
     }
 
+    await Warehouse.create({
+      name: '特米TECH',
+      address: '广东省佛山市南海区里水镇得胜村横五路5号103仓-AFZUV—',
+      phoneNumber: '17324524246',
+    });
+
+    const regions = await Region.create([
+      {
+        name: 'Чуйская',
+        lang: 'ru',
+      },
+      {
+        name: 'Таласская',
+        lang: 'ru',
+      },
+      {
+        name: 'Иссык-Кульская',
+        lang: 'ru',
+      },
+      {
+        name: 'Нарынская',
+        lang: 'ru',
+      },
+      {
+        name: 'Джалал-Абадская',
+        lang: 'ru',
+      },
+      {
+        name: 'Ошская',
+        lang: 'ru',
+      },
+      {
+        name: 'Баткенская',
+        lang: 'ru',
+      },
+    ]);
+
     const pups = await Pup.create([
       {
         name: 'Pup№1',
-        region: 'Чуйская',
+        region: regions[0]._id,
         settlement: 'г.Бишкек',
         address: 'пр.Манаса 44',
-        isChina: false,
         phoneNumber: '996505999774',
       },
       {
         name: 'Pup№2',
-        region: 'Таласская',
+        region: regions[1]._id,
         settlement: 'г.Талас',
         address: 'ул. Бердике Баатыра 191',
-        isChina: false,
         phoneNumber: '996505999774',
       },
       {
         name: 'Pup№3',
-        region: 'Иссык-Кульская',
+        region: regions[2]._id,
         settlement: 'г.Каракол',
         address: 'ул.Ленина 186/1',
-        isChina: false,
         phoneNumber: '996505999774',
       },
       {
         name: 'Pup№4',
-        region: 'Нарынская',
+        region: regions[3]._id,
         settlement: 'г.Нарын',
         address: 'ул.Чаначева 15',
-        isChina: false,
         phoneNumber: '996505999774',
       },
       {
         name: 'Pup№5',
-        region: 'Джалал-Абадская',
+        region: regions[4]._id,
         settlement: 'г.Джалал-Абад',
         address: 'ул.Кыргызской Республики 79',
-        isChina: false,
         phoneNumber: '996505999774',
       },
       {
         name: 'Pup№6',
-        region: 'Ошская',
+        region: regions[5]._id,
         settlement: 'г.Ош',
         address: 'ул.Гапара Айтиева 45а',
-        isChina: false,
         phoneNumber: '996505999774',
       },
       {
         name: 'Pup№7',
-        region: 'Баткенская',
+        region: regions[6]._id,
         settlement: 'г.Баткен',
         address: 'ул.Раззакова 1',
-        isChina: false,
         phoneNumber: '996505999774',
       },
     ]);
@@ -92,10 +123,10 @@ const run = async () => {
         firstName: 'Super-Admin',
         lastName: 'Super-Admin',
         middleName: 'Super-Admin',
-        pupID: pups[0],
+        pupID: pups[0]._id,
         phoneNumber: '996505999774',
         marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
-        region: 'Таласская',
+        region: regions[0]._id,
         token: crypto.randomUUID(),
         role: 'super',
         address: 'Чуйкова 122',
@@ -106,10 +137,10 @@ const run = async () => {
         firstName: 'Admin',
         lastName: 'Admin',
         middleName: 'Admin',
-        pupID: pups[0],
+        pupID: pups[0]._id,
         phoneNumber: '996505999774',
         marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
-        region: 'Чуйская',
+        region: regions[1]._id,
         token: crypto.randomUUID(),
         role: 'admin',
         address: 'Чуйкова 122',
@@ -120,10 +151,10 @@ const run = async () => {
         firstName: 'Manager',
         lastName: 'Manager',
         middleName: 'Manager',
-        pupID: pups[1],
+        pupID: pups[1]._id,
         phoneNumber: '996505999774',
         marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
-        region: 'Ошская',
+        region: regions[2]._id,
         token: crypto.randomUUID(),
         role: 'manager',
         address: 'Чуйкова 122',
@@ -134,10 +165,10 @@ const run = async () => {
         firstName: 'DefaultUser-1',
         lastName: 'DefaultUser-1',
         middleName: 'DefaultUser-1',
-        pupID: pups[2],
+        pupID: pups[2]._id,
         phoneNumber: '996505999774',
         marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
-        region: 'Иссык-Кульская',
+        region: regions[3]._id,
         token: crypto.randomUUID(),
         address: 'Чуйкова 122',
       },
@@ -147,10 +178,10 @@ const run = async () => {
         firstName: 'DefaultUser-2',
         lastName: 'DefaultUser-2',
         middleName: 'DefaultUser-2',
-        pupID: pups[0],
+        pupID: pups[0]._id,
         phoneNumber: '996505999774',
         marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
-        region: 'Нарынская',
+        region: regions[4]._id,
         token: crypto.randomUUID(),
         address: 'Чуйкова 122',
       },
@@ -160,10 +191,10 @@ const run = async () => {
         firstName: 'DefaultUser-3',
         lastName: 'DefaultUser-3',
         middleName: 'DefaultUser-3',
-        pupID: pups[0],
+        pupID: pups[0]._id,
         phoneNumber: '996505999774',
         marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
-        region: 'Баткенская',
+        region: regions[5]._id,
         token: crypto.randomUUID(),
         address: 'Чуйкова 122',
       },
@@ -173,109 +204,107 @@ const run = async () => {
         firstName: 'DefaultUser-4',
         lastName: 'DefaultUser-4',
         middleName: 'DefaultUser-4',
-        pupID: pups[0],
+        pupID: pups[0]._id,
         phoneNumber: '996505999774',
         marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
-        region: 'Баткенская',
+        region: regions[6]._id,
         token: crypto.randomUUID(),
         address: 'Чуйкова 122',
       },
     ]);
-
+    
     await Shipment.create([
       {
-        userShipId: User._id,
-        marketID: User.marketID,
-        user: users[3],
-        marketShipID: users[3].marketId,
-        pupID: pups[0],
+        userId: users[3]._id,
+        marketId: users[3].marketId,
+        status: 'КНР_ПРИБЫЛО',
+        dimensions: {
+          height: 1000,
+          width: 1000,
+          length: 1000,
+        },
+        weight: 123,
+        price: 250,
+        isPaid: false,
+      },
+      {
+        userId: users[4]._id,
+        marketId: users[4].marketId,
+        status: 'КНР_ОТПРАВЛЕНО',
+        dimensions: {
+          height: 1020,
+          width: 1030,
+          length: 100,
+        },
+        weight: 13,
+        price: 250,
+        isPaid: false,
+      },
+      {
+        userId: users[5]._id,
+        marketId: users[5].marketId,
+        status: 'КР_ПРИБЫЛО',
+        pupId: pups[0]._id,
+        dimensions: {
+          height: 1020,
+          width: 1030,
+          length: 100,
+        },
+        weight: 13,
+        price: 250,
+        isPaid: false,
+      },
+      {
+        userId: users[5]._id,
+        marketId: users[5].marketId,
         status: 'КР_ОТПРАВЛЕНО',
-        dimensions: 'test',
-        weight: 1,
+        pupId: pups[2]._id,
+        dimensions: {
+          height: 1020,
+          width: 1030,
+          length: 100,
+        },
+        weight: 13,
+        price: 250,
+        isPaid: false,
+      },
+      {
+        userId: users[6]._id,
+        marketId: users[6].marketId,
+        pupId: pups[4]._id,
+        status: 'ЗАВЕРШЕН',
+        dimensions: {
+          height: 1020,
+          width: 1030,
+          length: 100,
+        },
+        weight: 13,
         price: 250,
         isPaid: true,
       },
       {
-        userShipId: User._id,
-        marketID: User.marketID,
-        user: users[1],
-        marketShipID: users[1].marketId,
-        pupID: pups[1],
-        status: 'КР_ОТПРАВЛЕНО',
-        dimensions: 'test',
-        weight: 10,
-        price: 200,
-        isPaid: true,
-      },
-      {
-        userShipId: User._id,
-        marketID: User.marketID,
-        user: users[3],
-        marketShipID: users[3].marketId,
-        pupID: pups[2],
-        status: 'КР_ОТПРАВЛЕНО',
-        dimensions: 'test',
-        weight: 7,
-        price: 150,
-        isPaid: true,
-      },
-      {
-        userShipId: User._id,
-        marketID: User.marketID,
-        user: users[4],
-        marketShipID: users[4].marketId,
-        pupID: pups[3],
-        status: 'КР_ОТПРАВЛЕНО',
-        dimensions: 'test',
-        weight: 7,
+        userId: users[6]._id,
+        marketId: users[6].marketId,
+        status: 'ОТКАЗ',
+        pupId: pups[5]._id,
+        dimensions: {
+          height: 1020,
+          width: 1030,
+          length: 100,
+        },
+        weight: 13,
         price: 250,
-        isPaid: true,
-      },
-      {
-        userShipId: User._id,
-        marketID: User.marketID,
-        user: users[0],
-        marketShipID: users[0].marketId,
-        pupID: pups[4],
-        status: 'КР_ОТПРАВЛЕНО',
-        dimensions: 'test',
-        weight: 732,
-        price: 100,
-        isPaid: true,
-      },
-      {
-        userShipId: User._id,
-        marketID: User.marketID,
-        user: users[0],
-        marketShipID: users[0].marketId,
-        pupID: pups[5],
-        status: 'КР_ОТПРАВЛЕНО',
-        dimensions: 'test',
-        weight: 7,
-        price: 103,
-        isPaid: true,
-      },
-      {
-        userShipId: User._id,
-        marketID: User.marketID,
-        user: users[6],
-        marketShipID: users[6].marketId,
-        pupID: pups[6],
-        status: 'КР_ОТПРАВЛЕНО',
-        dimensions: 'test',
-        weight: 7,
-        price: 503,
-        isPaid: true,
+        isPaid: false,
       },
     ]);
 
     await Price.create([
       {
-        price: 2100,
-        exchange: 88,
+        exchangeRate: 88,
+        deliveryPrice: 5,
       },
     ]);
-
+    
     await db.close();
   } catch (error) {
     console.error('Error:', error);

@@ -14,6 +14,12 @@ export interface UserFields {
   address: string;
 }
 
+export interface Filter {
+  region?: string;
+  settlement?: string;
+  role?: string;
+}
+
 interface UserMethods {
   checkPassword(password: string): Promise<boolean>;
   generateToken(): void;

@@ -1,4 +1,4 @@
-import {Schema, model, Types} from "mongoose";
+import { Schema, model, Types } from 'mongoose';
 import User from './User';
 
 const ShipmentHistorySchema = new Schema({
@@ -11,10 +11,12 @@ const ShipmentHistorySchema = new Schema({
       message: 'User does not exist!',
     },
   },
-  shipments: [{
+  shipments: [
+    {
       type: Schema.Types.ObjectId,
       ref: 'Shipment',
-  }],
+    },
+  ],
 });
 
 const ShipmentHistory = model('ShipmentHistory', ShipmentHistorySchema);

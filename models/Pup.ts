@@ -1,4 +1,5 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
+import Region from './Region';
 const PUPSchema = new Schema(
   {
     name: {
@@ -7,17 +8,14 @@ const PUPSchema = new Schema(
     },
 
     region: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'Region',
       required: true,
-      enum: [
-        'Чуйская',
-        'Иссык-Кульская',
-        'Таласская',
-        'Нарынская',
-        'Джалал-Абадская',
-        'Ошская',
-        'Баткенская',
-      ],
+      validate: async (value: Types.ObjectId) => {
+        const region = await Region.findById(value);
+        return Boolean(region);
+      },
+      message: 'VALIDATOR ERROR: Region does not exist!',
     },
 
     settlement: {
@@ -30,12 +28,12 @@ const PUPSchema = new Schema(
       required: true,
     },
 
-    phoneNumber: Number,
-
     isChina: {
       type: Boolean,
       default: false,
     },
+
+    phoneNumber: Number,
   },
   { versionKey: false },
 );
