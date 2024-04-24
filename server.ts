@@ -5,7 +5,7 @@ import config from './config';
 import usersRouter from './routers/users';
 import shipmentsRouter from './routers/shipments';
 import warehouseRouter from './routers/warehouses';
-import { priceRouter } from './routers/priceRouter';
+import { pricesRouter } from './routers/prices';
 import pupsRouter from './routers/pups';
 import regionsRouter from './routers/regions';
 
@@ -19,7 +19,7 @@ app.use('/users', usersRouter);
 app.use('/shipments', shipmentsRouter);
 app.use('/pups', pupsRouter);
 app.use('/warehouse', warehouseRouter);
-app.use('/price', priceRouter);
+app.use('/price', pricesRouter);
 app.use('/regions', regionsRouter);
 
 const run = async () => {
