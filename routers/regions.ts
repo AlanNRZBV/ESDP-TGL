@@ -2,7 +2,7 @@ import { Router } from 'express';
 import Region from '../models/Region';
 import permit from '../middleware/permit';
 import auth from '../middleware/auth';
-import { RegionData } from '../types/regions.type';
+import { RegionData } from '../types/regions.types';
 
 const regionsRouter = Router();
 
