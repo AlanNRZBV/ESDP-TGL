@@ -4,6 +4,7 @@ import Pup from '../models/Pup';
 import PUP from '../models/Pup';
 import permit from '../middleware/permit';
 import auth, { RequestWithUser } from '../middleware/auth';
+import { PupData } from '../types/pups.types';
 
 export const pupsRouter = Router();
 
@@ -11,15 +12,18 @@ pupsRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, ne
   const pupName = 'ПВЗ№';
   const pupNumber = (await PUP.find()).length;
   try {
-    const pup = new Pup({
+    const pupData: PupData = {
       name: pupName + (pupNumber + 1),
       region: req.body.region,
       settlement: req.body.settlement,
       address: req.body.address,
       phoneNumber: req.body.phoneNumber,
-    });
+    };
+
+    const pup = new Pup(pupData);
     await pup.save();
-    return res.send({ message: 'Pup is correctly added!', pup });
+
+    return res.send({ message: `${pupData.name} успешно добавлен`, pup });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(e);
@@ -30,22 +34,22 @@ pupsRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, ne
 
 pupsRouter.get('/', async (_req, res, next) => {
   try {
-    const pups = await PUP.find().populate('region', '_id name lang');
-    console.log(pups);
-    return res.send(pups);
+    const pups = await PUP.find().populate('region', 'name lang');
+
+    return res.send({ message: 'Список ПВЗ', pups });
   } catch (e) {
     next(e);
   }
 });
 
 pupsRouter.delete('/:id', auth, permit('admin'), async (_req, res, next) => {
-  const _id = _req.params.id;
   try {
-    const pups = await PUP.findByIdAndDelete(_id);
-    if (!pups) {
-      return res.status(404).send({ message: 'PUP not found' });
+    const _id = _req.params.id;
+    const pup = await PUP.findByIdAndDelete(_id);
+    if (!pup) {
+      return res.status(404).send({ message: 'ПВЗ не найден' });
     }
-    return res.send({ message: 'PUP successfully deleted' });
+    return res.send({ message: 'ПВЗ успешно удален', pup });
   } catch (e) {
     next(e);
   }
