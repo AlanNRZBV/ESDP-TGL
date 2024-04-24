@@ -80,6 +80,7 @@ shipmentsRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, re
 shipmentsRouter.get('/', auth, permit('admin'), async (req, res) => {
   try {
     const regionId = req.query.region as string;
+    const orderByTrackingNumber = req.query.orderByTrackingNumber as string;
 
     let filter: FilterQuery<ShipmentData> = {};
 
@@ -88,6 +89,12 @@ shipmentsRouter.get('/', auth, permit('admin'), async (req, res) => {
       const idList = pups.map((pup) => pup._id);
 
       filter = { pupId: { $in: idList } };
+    }
+
+    if (orderByTrackingNumber) {
+      const shipment = await Shipment.findOne({ trackerNumber: orderByTrackingNumber });
+
+      return res.send(shipment);
     }
 
     const shipments = await Shipment.find(filter);
