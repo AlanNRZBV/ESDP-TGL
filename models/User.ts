@@ -2,7 +2,7 @@ import mongoose, { HydratedDocument, Schema, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { PhoneNumberUtil } from 'google-libphonenumber';
-import { UserFields, UserModel } from '../user.type';
+import { UserFields, UserModel } from '../types/user.type';
 import PUP from './Pup';
 import Region from './Region';
 

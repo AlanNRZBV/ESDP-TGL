@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import User from '../models/User';
-import { Filter } from '../user.type';
+import { Filter } from '../types/user.type';
 import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
 
