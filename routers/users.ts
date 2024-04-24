@@ -88,7 +88,7 @@ usersRouter.get('/', async (req, res, next) => {
       filter.role = role as string;
     }
     const users = await (Object.keys(filter).length > 0 ? User.find(filter) : User.find());
-    res.send(users);
+    res.send({ message: 'Данные о пользователях', users });
   } catch (e) {
     next(e);
   }
@@ -99,11 +99,11 @@ usersRouter.get('/:id', async (req, res) => {
     const userId = req.params.id;
     const user = await User.findById(userId);
     if (!user) {
-      res.status(404).send('Пользователь не найден!');
+      res.status(404).send({ message: 'Пользователь не найден!' });
     }
     res.send(user);
   } catch (error) {
-    res.status(500).send('Пользователь не найден!');
+    res.status(500).send({ message: 'Пользователь не найден!' });
   }
 });
 
@@ -112,7 +112,7 @@ usersRouter.post('/sessions', async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
-      return res.status(422).send({ message: 'Пользователь не найден' });
+      return res.status(422).send({ message: 'Пользователь не найден!' });
     }
 
     const isMatch = await user.checkPassword(req.body.password);
@@ -172,7 +172,7 @@ usersRouter.delete(
       const user = await User.findById(itemId);
 
       if (!user) {
-        return res.status(404).send({ error: 'Пользователь не найден!' });
+        return res.status(404).send({ message: 'Пользователь не найден!' });
       }
 
       if (user.role === 'client' && role === 'admin') {
