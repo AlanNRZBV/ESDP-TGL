@@ -18,7 +18,7 @@ warehouseRouter.get('/', auth, async (req, res, next) => {
   }
 });
 
-warehouseRouter.post('/add', auth, permit('admin', 'super'), async (req, res, next) => {
+warehouseRouter.post('/add', auth, permit('super'), async (req, res, next) => {
   try {
     const newWarehouse: WarehouseTypes = {
       name: req.body.name,
