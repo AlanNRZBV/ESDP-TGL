@@ -27,12 +27,6 @@ const PUPSchema = new Schema(
       type: String,
       required: true,
     },
-
-    isChina: {
-      type: Boolean,
-      default: false,
-    },
-
     phoneNumber: Number,
   },
   { versionKey: false },

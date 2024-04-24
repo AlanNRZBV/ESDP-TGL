@@ -2,7 +2,7 @@ import { Router } from 'express';
 import auth from '../middleware/auth';
 import permit from '../middleware/permit';
 import Warehouse from '../models/Warehouse';
-import { WarehouseTypes } from '../warehouse.types';
+import { WarehouseTypes } from '../types/warehouse.types';
 
 const warehouseRouter = Router();
 
