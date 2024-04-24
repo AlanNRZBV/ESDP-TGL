@@ -10,9 +10,9 @@ warehouseRouter.get('/', auth, async (req, res, next) => {
   try {
     const warehouse = await Warehouse.find();
     if (warehouse.length < 1) {
-      return res.status(404).send({ error: 'Ни одного склада не было найдено.' });
+      return res.status(404).send({ message: 'Ни одного склада не было найдено.' });
     }
-    return res.send(warehouse);
+    return res.send({ message: 'Список грузов', warehouse });
   } catch (e) {
     next(e);
   }
@@ -28,7 +28,7 @@ warehouseRouter.post('/add', auth, permit('admin', 'super'), async (req, res, ne
     const warehouse = new Warehouse(newWarehouse);
     await warehouse.save();
 
-    res.send(warehouse);
+    res.send({ message: 'Склад успешно добавлен', warehouse });
   } catch (e) {
     next(e);
   }

@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 export interface UserFields {
   email: string;
   marketId: number;
@@ -12,6 +14,20 @@ export interface UserFields {
   region: string;
   settlement: string;
   address: string;
+}
+
+export interface UserData {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  pupID: mongoose.Types.ObjectId;
+  role: string;
+  region: mongoose.Types.ObjectId;
+  phoneNumber: string;
+  address: string;
+  settlement: string;
 }
 
 export interface Filter {

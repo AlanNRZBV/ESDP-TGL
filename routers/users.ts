@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import User from '../models/User';
-import { Filter } from '../types/user.types';
+import { Filter, UserData } from '../types/user.types';
 import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
 
@@ -9,23 +9,27 @@ const usersRouter = express.Router();
 
 usersRouter.post('/', async (req, res, next) => {
   try {
-    const user = new User({
+    const userData: UserData = {
       email: req.body.email,
       password: req.body.password,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       middleName: req.body.middleName,
       pupID: req.body.pupID,
+      role: req.body.role,
       region: req.body.region,
       phoneNumber: req.body.phoneNumber,
       address: req.body.address,
       settlement: req.body.settlement,
-    });
+    };
+
+    const user = new User(userData);
 
     user.generateMarketID();
     user.generateToken();
     await user.save();
-    return res.send({ message: 'OK!', user });
+
+    return res.send({ message: 'Регистрация прошла успешно', user });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(e);
@@ -34,34 +38,39 @@ usersRouter.post('/', async (req, res, next) => {
   }
 });
 
-usersRouter.post('/', auth, permit('super', 'admin'), async (req: RequestWithUser, res, next) => {
-  try {
-    const isSuperAdmin = req.user?.role === 'super';
-    const newUser = new User({
-      email: req.body.email,
-      password: req.body.password,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      middleName: req.body.middleName,
-      pupID: req.body.pupID,
-      region: req.body.region,
-      phoneNumber: req.body.phoneNumber,
-      address: req.body.address,
-      settlement: req.body.settlement,
-      role: isSuperAdmin ? 'admin' : 'manager',
-    });
+usersRouter.post(
+  '/staff',
+  auth,
+  permit('super', 'admin'),
+  async (req: RequestWithUser, res, next) => {
+    try {
+      const isSuperAdmin = req.user?.role === 'super';
+      const newUser = new User({
+        email: req.body.email,
+        password: req.body.password,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        middleName: req.body.middleName,
+        pupID: req.body.pupID,
+        region: req.body.region,
+        phoneNumber: req.body.phoneNumber,
+        address: req.body.address,
+        settlement: req.body.settlement,
+        role: isSuperAdmin ? 'admin' : 'manager',
+      });
 
-    newUser.generateMarketID();
-    newUser.generateToken();
-    await newUser.save();
-    return res.send({ message: 'OK!', newUser });
-  } catch (e) {
-    if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(422).send(e);
+      newUser.generateMarketID();
+      newUser.generateToken();
+      await newUser.save();
+      return res.send({ message: 'Пользователь добавлен', newUser });
+    } catch (e) {
+      if (e instanceof mongoose.Error.ValidationError) {
+        return res.status(422).send(e);
+      }
+      next(e);
     }
-    next(e);
-  }
-});
+  },
+);
 
 usersRouter.get('/', async (req, res, next) => {
   try {
@@ -90,11 +99,11 @@ usersRouter.get('/:id', async (req, res) => {
     const userId = req.params.id;
     const user = await User.findById(userId);
     if (!user) {
-      res.status(404).send('User Not Found');
+      res.status(404).send('Пользователь не найден!');
     }
     res.send(user);
   } catch (error) {
-    res.status(500).send('Not Found');
+    res.status(500).send('Пользователь не найден!');
   }
 });
 
@@ -103,19 +112,19 @@ usersRouter.post('/sessions', async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
-      return res.status(422).send({ error: 'User not found!' });
+      return res.status(422).send({ message: 'Пользователь не найден' });
     }
 
     const isMatch = await user.checkPassword(req.body.password);
 
     if (!isMatch) {
-      return res.status(422).send({ error: 'Password is wrong!' });
+      return res.status(422).send({ message: 'Пароль или почта введены некорректно' });
     }
 
     user.generateToken();
     await user.save();
 
-    return res.send({ message: 'Email and password are correct!', user });
+    return res.send({ message: 'Данные введены правильно', user });
   } catch (e) {
     next(e);
   }
@@ -124,7 +133,7 @@ usersRouter.post('/sessions', async (req, res, next) => {
 usersRouter.delete('/sessions', async (req, res, next) => {
   try {
     const headerValue = req.get('Authorization');
-    const successMessage = { message: 'Success!' };
+    const successMessage = { message: 'Успешная операция!' };
 
     if (!headerValue) {
       return res.send(successMessage);
@@ -163,7 +172,7 @@ usersRouter.delete(
       const user = await User.findById(itemId);
 
       if (!user) {
-        return res.status(404).send({ error: 'User not found!' });
+        return res.status(404).send({ error: 'Пользователь не найден!' });
       }
 
       if (user.role === 'client' && role === 'admin') {
@@ -171,10 +180,10 @@ usersRouter.delete(
       } else if (role === 'super') {
         await User.findByIdAndDelete(itemId);
       } else {
-        return res.status(404).send({ error: 'You cannot delete this user!' });
+        return res.status(404).send({ message: 'У вас нет полномочий!' });
       }
 
-      res.send({ success: true, message: 'User deleted successfully.' });
+      res.send({ message: 'Пользователь был удален' });
     } catch (e) {
       next(e);
     }
@@ -188,10 +197,10 @@ usersRouter.put('/update', auth, async (req: RequestWithUser, res, next) => {
     const userToUpdate = await User.findById(currentUser?.id);
 
     if (!userToUpdate) {
-      return res.status(404).send({ message: 'User not found' });
+      return res.status(404).send({ message: 'Пользователь не найден!' });
     }
 
-    await User.updateOne(
+    const updatedUser = await User.updateOne(
       { _id: currentUser?._id },
       {
         $set: {
@@ -206,9 +215,10 @@ usersRouter.put('/update', auth, async (req: RequestWithUser, res, next) => {
           settlement: req.body.settlement,
         },
       },
+      { new: true },
     );
 
-    return res.send({ message: 'User updated successfully' });
+    return res.send({ message: 'Данные успешно обновлены', updatedUser });
   } catch (e) {
     next(e);
   }
@@ -222,14 +232,14 @@ usersRouter.put('/:id', auth, permit('super'), async (req: RequestWithUser, res,
     const user = await User.findById(itemId);
 
     if (!user) {
-      return res.status(404).send({ message: 'User not found' });
+      return res.status(404).send({ message: 'Пользователь не найден!' });
     }
 
     if (user.role !== 'admin' && user.role !== 'manager') {
       roleToUpdate = user.role;
     }
 
-    await User.updateOne(
+    const updatedUser = await User.updateOne(
       { _id: itemId },
       {
         $set: {
@@ -245,9 +255,10 @@ usersRouter.put('/:id', auth, permit('super'), async (req: RequestWithUser, res,
           role: roleToUpdate,
         },
       },
+      { new: true },
     );
 
-    return res.send({ message: 'User updated successfully' });
+    return res.send({ message: 'Данные успешно обновлены', updatedUser });
   } catch (e) {
     next(e);
   }
@@ -260,7 +271,7 @@ usersRouter.put('/admin/:id', auth, permit('admin'), async (req: RequestWithUser
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).send({ message: 'User not found' });
+      return res.status(404).send({ message: 'Пользователь не найден!' });
     }
 
     if (user.role === 'client' || user.role === 'manager') {
@@ -281,10 +292,10 @@ usersRouter.put('/admin/:id', auth, permit('admin'), async (req: RequestWithUser
         },
       );
     } else {
-      return res.status(404).send({ error: 'You cannot update this user!' });
+      return res.status(404).send({ message: 'У вас нет полномочий!' });
     }
 
-    return res.send({ message: 'User updated successfully' });
+    return res.send({ message: 'Данные успешно обновлены' });
   } catch (e) {
     next(e);
   }
