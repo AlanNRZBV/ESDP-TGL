@@ -12,7 +12,7 @@ warehouseRouter.get('/', auth, async (req, res, next) => {
     if (warehouse.length < 1) {
       return res.status(404).send({ message: 'Ни одного склада не было найдено.' });
     }
-    return res.send({ message: 'Список грузов', warehouse });
+    return res.send({ message: 'Список складов успешно загружен', warehouses: warehouse });
   } catch (e) {
     next(e);
   }
