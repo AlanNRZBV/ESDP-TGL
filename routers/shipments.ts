@@ -26,9 +26,9 @@ const countWeight = (height: number, width: number, length: number, weight: numb
 const getShipmentData = async (req: RequestWithUser, res: Response) => {
   const user = req.user;
 
-  const height = parseFloat(req.body.height);
-  const width = parseFloat(req.body.width);
-  const length = parseFloat(req.body.length);
+  const height = parseFloat(req.body.dimensions.height);
+  const width = parseFloat(req.body.dimensions.width);
+  const length = parseFloat(req.body.dimensions.length);
   const weight = parseFloat(req.body.weight);
 
   const finalWeight = countWeight(height, width, length, weight);
@@ -63,21 +63,26 @@ const getShipmentData = async (req: RequestWithUser, res: Response) => {
   };
 };
 
-shipmentsRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, next) => {
-  try {
-    const newShipment = await getShipmentData(req, res);
-    const shipment = new Shipment(newShipment);
-    await shipment.save();
-    return res.send({ message: 'Груз успешно добавлен', shipment });
-  } catch (e) {
-    if (e instanceof mongoose.Error.ValidationError) {
-      res.status(422).send(e);
+shipmentsRouter.post(
+  '/',
+  auth,
+  permit('admin', 'super'),
+  async (req: RequestWithUser, res, next) => {
+    try {
+      const newShipment = await getShipmentData(req, res);
+      const shipment = new Shipment(newShipment);
+      await shipment.save();
+      return res.send({ message: 'Груз успешно добавлен', shipment });
+    } catch (e) {
+      if (e instanceof mongoose.Error.ValidationError) {
+        res.status(422).send(e);
+      }
+      next(e);
     }
-    next(e);
-  }
-});
+  },
+);
 
-shipmentsRouter.get('/', auth, permit('admin'), async (req, res) => {
+shipmentsRouter.get('/', auth, permit('admin', 'super'), async (req, res) => {
   try {
     const regionId = req.query.region as string;
     const orderByTrackingNumber = req.query.orderByTrackingNumber as string;
@@ -97,7 +102,7 @@ shipmentsRouter.get('/', auth, permit('admin'), async (req, res) => {
       return res.send(shipment);
     }
 
-    const shipments = await Shipment.find(filter);
+    const shipments = await Shipment.find(filter).populate('userId', 'firstName lastName');
     return res.send({ message: 'Список грузов', shipments });
   } catch (e) {
     res.send(e);
