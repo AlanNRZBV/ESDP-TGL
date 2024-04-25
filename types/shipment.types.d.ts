@@ -5,7 +5,11 @@ export interface ShipmentData {
   userMarketId: number;
   pupId: mongoose.Types.ObjectId;
   status: string;
-  dimensions: ShipmentKeys;
+  dimensions: {
+    height: number;
+    width: number;
+    length: number;
+  };
   weight: number;
   price: ShipmentKeys;
   trackerNumber: number;
