@@ -63,7 +63,7 @@ pupsRouter.put('/:id', auth, permit('admin'), async (req, res, next) => {
       phoneNumber: req.body.phoneNumber,
     };
 
-    const findPup = await PUP.findByIdAndUpdate({ _id: req.params.id }, updateData,{ new: true });
+    const findPup = await PUP.findByIdAndUpdate({ _id: req.params.id }, updateData, { new: true });
     if (!findPup) {
       return res.status(404).send({ message: 'PUP id not found' });
     }
