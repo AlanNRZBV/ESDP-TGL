@@ -9,8 +9,8 @@ export const pricesRouter = Router();
 
 pricesRouter.get('/', auth, permit('super', 'admin'), async (_req, res, next) => {
   try {
-    const priceData = await Price.findOne();
-    return res.send({ message: 'Данные о курсе валюта и цене за доставку', priceData });
+    const price = await Price.findOne();
+    return res.send({ message: 'Данные о курсе валюта и цене за доставку', price });
   } catch (e) {
     next(e);
   }
@@ -21,13 +21,13 @@ pricesRouter.post('/', auth, permit('super'), async (req, res, next) => {
     const existingPrice = await Price.findOne();
 
     if (!existingPrice) {
-      const price: PriceType = {
+      const priceData: PriceType = {
         exchangeRate: parseFloat(req.body.exchangeRate),
         deliveryPrice: parseFloat(req.body.deliveryPrice),
       };
-      const priceData = new Price(price);
-      await priceData.save();
-      return res.send({ message: 'Курс валюты и цена за доставку успешно установлены', priceData });
+      const price = new Price(priceData);
+      await price.save();
+      return res.send({ message: 'Курс валюты и цена за доставку успешно установлены', price });
     } else {
       return res.send({ message: 'В базе данных может быть только одна ценовая категория' });
     }
@@ -50,7 +50,7 @@ pricesRouter.put('/:id', auth, permit('super', 'admin'), async (req, res, next) 
       return res.status(404).send({ error: 'Неправильный формат ID!' });
     }
 
-    const newPrice = await Price.findByIdAndUpdate(
+    const price = await Price.findByIdAndUpdate(
       priceId,
       {
         exchangeRate: parseFloat(req.body.exchangeRate),
@@ -59,7 +59,7 @@ pricesRouter.put('/:id', auth, permit('super', 'admin'), async (req, res, next) 
       { new: true },
     );
 
-    return res.send({ message: 'Данные успешно обновлены', newPrice });
+    return res.send({ message: 'Данные успешно обновлены', price });
   } catch (e) {
     next(e);
   }
@@ -75,13 +75,13 @@ pricesRouter.delete('/:id', auth, permit('super'), async (req, res, next) => {
       return res.status(404).send({ error: 'Неправильный формат ID!' });
     }
 
-    const result = await Price.findByIdAndDelete(priceId);
+    const price = await Price.findByIdAndDelete(priceId);
 
-    if (!result) {
+    if (!price) {
       return res.status(404).send({ message: 'Данные не найдены' });
     }
 
-    return res.send({ message: 'Данные удалены', result });
+    return res.send({ message: 'Данные удалены', price });
   } catch (e) {
     return next(e);
   }
