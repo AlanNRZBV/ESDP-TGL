@@ -38,39 +38,33 @@ usersRouter.post('/', async (req, res, next) => {
   }
 });
 
-usersRouter.post(
-  '/staff',
-  auth,
-  permit('super', 'admin'),
-  async (req: RequestWithUser, res, next) => {
-    try {
-      const isSuperAdmin = req.user?.role === 'super';
-      const user = new User({
-        email: req.body.email,
-        password: req.body.password,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        middleName: req.body.middleName,
-        pupID: req.body.pupID,
-        region: req.body.region,
-        phoneNumber: req.body.phoneNumber,
-        address: req.body.address,
-        settlement: req.body.settlement,
-        role: isSuperAdmin ? 'admin' : 'manager',
-      });
+usersRouter.post('/staff', auth, permit('super'), async (req: RequestWithUser, res, next) => {
+  try {
+    const newUser = new User({
+      email: req.body.email,
+      password: req.body.password,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      middleName: req.body.middleName,
+      pupID: req.body.pupID,
+      region: req.body.region,
+      phoneNumber: req.body.phoneNumber,
+      address: req.body.address,
+      settlement: req.body.settlement,
+      role: req.body.role,
+    });
 
-      user.generateMarketID();
-      user.generateToken();
-      await user.save();
-      return res.send({ message: 'Пользователь добавлен', newUser: user });
-    } catch (e) {
-      if (e instanceof mongoose.Error.ValidationError) {
-        return res.status(422).send(e);
-      }
-      next(e);
+    newUser.generateMarketID();
+    newUser.generateToken();
+    await newUser.save();
+    return res.send({ message: 'Пользователь добавлен', newUser });
+  } catch (e) {
+    if (e instanceof mongoose.Error.ValidationError) {
+      return res.status(422).send(e);
     }
-  },
-);
+    next(e);
+  }
+});
 
 usersRouter.get('/', async (req, res, next) => {
   try {
@@ -87,7 +81,11 @@ usersRouter.get('/', async (req, res, next) => {
     if (role) {
       filter.role = role as string;
     }
-    const users = await (Object.keys(filter).length > 0 ? User.find(filter) : User.find());
+    const users = await (
+      Object.keys(filter).length > 0
+        ? User.find(filter).populate({ path: 'region', select: 'name' })
+        : User.find()
+    ).populate({ path: 'region', select: 'name' });
     res.send({ message: 'Данные о пользователях', users });
   } catch (e) {
     next(e);
@@ -97,11 +95,11 @@ usersRouter.get('/', async (req, res, next) => {
 usersRouter.get('/:id', async (req, res) => {
   try {
     const userId = req.params.id;
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate({ path: 'region', select: 'name' });
     if (!user) {
       res.status(404).send({ message: 'Пользователь не найден!' });
     }
-    res.send({ message: 'Пользователь найден', user });
+    res.send(user);
   } catch (error) {
     res.status(500).send({ message: 'Пользователь не найден!' });
   }
