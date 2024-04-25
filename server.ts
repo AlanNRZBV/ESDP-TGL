@@ -22,7 +22,7 @@ app.use('/pups', pupsRouter);
 app.use('/warehouse', warehousesRouter);
 app.use('/price', pricesRouter);
 app.use('/regions', regionsRouter);
-app.use('/companyAddress', companyAddressesRouter);
+app.use('/company-addresses', companyAddressesRouter);
 
 const run = async () => {
   await mongoose.connect(config.mongoose.db);
