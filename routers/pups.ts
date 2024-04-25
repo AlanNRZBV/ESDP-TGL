@@ -4,7 +4,7 @@ import Pup from '../models/Pup';
 import PUP from '../models/Pup';
 import permit from '../middleware/permit';
 import auth, { RequestWithUser } from '../middleware/auth';
-import { PupData } from '../types/pups.types';
+import { PupData, PupDataMutation } from '../types/pups.types';
 
 export const pupsRouter = Router();
 
@@ -54,19 +54,23 @@ pupsRouter.delete('/:id', auth, permit('admin'), async (_req, res, next) => {
     next(e);
   }
 });
-pupsRouter.put('/:id', auth, permit('admin'), async (_req, res) => {
+pupsRouter.put('/:id', auth, permit('admin'), async (req, res, next) => {
   try {
-    const _id = _req.params.id;
-    const pup = await PUP.findById(_id);
-    if (!pup) {
+    const updateData: PupDataMutation = {
+      name: req.body.name,
+      settlement: req.body.settlement,
+      address: req.body.address,
+      phoneNumber: req.body.phoneNumber,
+    };
+
+    const findPup = await PUP.findByIdAndUpdate({ _id: req.params.id }, updateData, { new: true });
+    if (!findPup) {
       return res.status(404).send({ message: 'PUP id not found' });
     }
 
-    await pup.save();
-
     res.send({ message: 'PUPs status toggled successfully' });
   } catch (e) {
-    res.status(500).send({ error: 'Internal Server Error' });
+    next(e);
   }
 });
 
