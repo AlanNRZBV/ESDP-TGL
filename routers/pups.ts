@@ -54,7 +54,7 @@ pupsRouter.delete('/:id', auth, permit('super'), async (_req, res, next) => {
     next(e);
   }
 });
-pupsRouter.put('/:id', auth, permit('super'), async (_req, res) => {
+pupsRouter.put('/:id', auth, permit('super'), async (req, res, next) => {
   try {
     const updateData: PupDataMutation = {
       name: req.body.name,
@@ -65,10 +65,10 @@ pupsRouter.put('/:id', auth, permit('super'), async (_req, res) => {
 
     const findPup = await PUP.findByIdAndUpdate({ _id: req.params.id }, updateData, { new: true });
     if (!findPup) {
-      return res.status(404).send({ message: 'PUP id not found' });
+      return res.status(404).send({ message: 'ПВЗ не найден' });
     }
 
-    res.send({ message: 'PUPs status toggled successfully' });
+    res.send({ message: 'Данные успешно обновлены' });
   } catch (e) {
     next(e);
   }

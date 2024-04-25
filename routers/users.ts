@@ -45,7 +45,7 @@ usersRouter.post(
   async (req: RequestWithUser, res, next) => {
     try {
       const isSuperAdmin = req.user?.role === 'super';
-      const newUser = new User({
+      const user = new User({
         email: req.body.email,
         password: req.body.password,
         firstName: req.body.firstName,
@@ -59,10 +59,10 @@ usersRouter.post(
         role: isSuperAdmin ? 'admin' : 'manager',
       });
 
-      newUser.generateMarketID();
-      newUser.generateToken();
-      await newUser.save();
-      return res.send({ message: 'Пользователь добавлен', newUser });
+      user.generateMarketID();
+      user.generateToken();
+      await user.save();
+      return res.send({ message: 'Пользователь добавлен', newUser: user });
     } catch (e) {
       if (e instanceof mongoose.Error.ValidationError) {
         return res.status(422).send(e);
@@ -101,7 +101,7 @@ usersRouter.get('/:id', async (req, res) => {
     if (!user) {
       res.status(404).send({ message: 'Пользователь не найден!' });
     }
-    res.send(user);
+    res.send({ message: 'Пользователь найден', user });
   } catch (error) {
     res.status(500).send({ message: 'Пользователь не найден!' });
   }
@@ -109,7 +109,7 @@ usersRouter.get('/:id', async (req, res) => {
 
 usersRouter.post('/sessions', async (req, res, next) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email: req.body.email }).populate('region');
 
     if (!user) {
       return res.status(422).send({ message: 'Пользователь не найден!' });
@@ -200,7 +200,7 @@ usersRouter.put('/update', auth, async (req: RequestWithUser, res, next) => {
       return res.status(404).send({ message: 'Пользователь не найден!' });
     }
 
-    const updatedUser = await User.updateOne(
+    const user = await User.updateOne(
       { _id: currentUser?._id },
       {
         $set: {
@@ -218,7 +218,7 @@ usersRouter.put('/update', auth, async (req: RequestWithUser, res, next) => {
       { new: true },
     );
 
-    return res.send({ message: 'Данные успешно обновлены', updatedUser });
+    return res.send({ message: 'Данные успешно обновлены', user });
   } catch (e) {
     next(e);
   }
@@ -229,17 +229,17 @@ usersRouter.put('/:id', auth, permit('super'), async (req: RequestWithUser, res,
     const itemId = req.params.id;
     let roleToUpdate = req.body.role;
 
-    const user = await User.findById(itemId);
+    const existingUser = await User.findById(itemId);
 
-    if (!user) {
+    if (!existingUser) {
       return res.status(404).send({ message: 'Пользователь не найден!' });
     }
 
-    if (user.role !== 'admin' && user.role !== 'manager') {
-      roleToUpdate = user.role;
+    if (existingUser.role !== 'admin' && existingUser.role !== 'manager') {
+      roleToUpdate = existingUser.role;
     }
 
-    const updatedUser = await User.updateOne(
+    const user = await User.updateOne(
       { _id: itemId },
       {
         $set: {
@@ -258,7 +258,7 @@ usersRouter.put('/:id', auth, permit('super'), async (req: RequestWithUser, res,
       { new: true },
     );
 
-    return res.send({ message: 'Данные успешно обновлены', updatedUser });
+    return res.send({ message: 'Данные успешно обновлены', user });
   } catch (e) {
     next(e);
   }
@@ -275,7 +275,7 @@ usersRouter.put('/admin/:id', auth, permit('admin'), async (req: RequestWithUser
     }
 
     if (user.role === 'client' || user.role === 'manager') {
-      await User.updateOne(
+      const user = await User.updateOne(
         { _id: userId },
         {
           $set: {
@@ -291,11 +291,10 @@ usersRouter.put('/admin/:id', auth, permit('admin'), async (req: RequestWithUser
           },
         },
       );
+      return res.send({ message: 'Данные успешно обновлены', user });
     } else {
       return res.status(404).send({ message: 'У вас нет полномочий!' });
     }
-
-    return res.send({ message: 'Данные успешно обновлены' });
   } catch (e) {
     next(e);
   }
