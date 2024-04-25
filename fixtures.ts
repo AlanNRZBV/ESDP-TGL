@@ -7,6 +7,7 @@ import Pup from './models/Pup';
 import Shipment from './models/Shipment';
 import Warehouse from './models/Warehouse';
 import Region from './models/Region';
+import CompanyAddress from './models/CompanyAddress';
 
 const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
   try {
@@ -328,6 +329,13 @@ const run = async () => {
         deliveryPrice: 5,
       },
     ]);
+
+    await CompanyAddress.create({
+      address: 'Test address string',
+      city: 'Bishkek',
+      district: 'Test district',
+      postCode: '720000',
+    });
 
     await db.close();
   } catch (error) {
