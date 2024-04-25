@@ -216,6 +216,25 @@ const run = async () => {
     await Shipment.create([
       {
         userId: users[3]._id,
+        pupId: pups[0],
+        userMarketId: users[3].marketId,
+        status: 'КНР_ПРИБЫЛО',
+        trackerNumber: 123456789,
+        dimensions: {
+          height: 1000,
+          width: 1000,
+          length: 1000,
+        },
+        weight: 123,
+        price: {
+          usd: 100,
+          som: 10000,
+        },
+        isPaid: false,
+      },
+      {
+        userId: users[3]._id,
+        pupId: pups[0],
         userMarketId: users[3].marketId,
         status: 'КНР_ПРИБЫЛО',
         trackerNumber: 123456789,
@@ -233,6 +252,7 @@ const run = async () => {
       },
       {
         userId: users[4]._id,
+        pupId: pups[1],
         userMarketId: users[4].marketId,
         status: 'КНР_ОТПРАВЛЕНО',
         trackerNumber: 123456788,
