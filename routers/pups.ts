@@ -8,7 +8,7 @@ import { PupData, PupDataMutation } from '../types/pups.types';
 
 export const pupsRouter = Router();
 
-pupsRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, res, next) => {
+pupsRouter.post('/', auth, permit('super'), async (req: RequestWithUser, res, next) => {
   const pupName = 'ПВЗ№';
   const pupNumber = (await PUP.find()).length;
   try {
@@ -42,7 +42,7 @@ pupsRouter.get('/', async (_req, res, next) => {
   }
 });
 
-pupsRouter.delete('/:id', auth, permit('admin'), async (_req, res, next) => {
+pupsRouter.delete('/:id', auth, permit('super'), async (_req, res, next) => {
   try {
     const _id = _req.params.id;
     const pup = await PUP.findByIdAndDelete(_id);
@@ -54,7 +54,7 @@ pupsRouter.delete('/:id', auth, permit('admin'), async (_req, res, next) => {
     next(e);
   }
 });
-pupsRouter.put('/:id', auth, permit('admin'), async (req, res, next) => {
+pupsRouter.put('/:id', auth, permit('super'), async (_req, res) => {
   try {
     const updateData: PupDataMutation = {
       name: req.body.name,
