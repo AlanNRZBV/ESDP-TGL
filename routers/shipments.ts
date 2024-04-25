@@ -68,7 +68,7 @@ shipmentsRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, re
     const newShipment = await getShipmentData(req, res);
     const shipment = new Shipment(newShipment);
     await shipment.save();
-    return res.send(shipment);
+    return res.send({ message: 'Груз успешно добавлен', shipment });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       res.status(422).send(e);
@@ -80,6 +80,7 @@ shipmentsRouter.post('/', auth, permit('admin'), async (req: RequestWithUser, re
 shipmentsRouter.get('/', auth, permit('admin'), async (req, res) => {
   try {
     const regionId = req.query.region as string;
+    const orderByTrackingNumber = req.query.orderByTrackingNumber as string;
 
     let filter: FilterQuery<ShipmentData> = {};
 
@@ -90,8 +91,14 @@ shipmentsRouter.get('/', auth, permit('admin'), async (req, res) => {
       filter = { pupId: { $in: idList } };
     }
 
+    if (orderByTrackingNumber) {
+      const shipment = await Shipment.findOne({ trackerNumber: orderByTrackingNumber });
+
+      return res.send(shipment);
+    }
+
     const shipments = await Shipment.find(filter);
-    return res.send(shipments);
+    return res.send({ message: 'Список грузов', shipments });
   } catch (e) {
     res.send(e);
   }
@@ -107,9 +114,13 @@ shipmentsRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => 
       return res.status(404).send({ error: 'Wrong ID!' });
     }
 
-    await Shipment.findByIdAndDelete(id);
+    const result = await Shipment.findByIdAndDelete(id);
 
-    return res.send({ message: 'Груз успешно удален' });
+    if (!result) {
+      return res.status(404).send({ message: 'Груз не найден' });
+    }
+
+    return res.send({ message: 'Груз успешно удален', result });
   } catch (e) {
     return next(e);
   }
@@ -133,7 +144,7 @@ shipmentsRouter.put('/:id', auth, permit('admin'), async (req: RequestWithUser, 
       return res.status(404).send({ message: 'Груз не найден' });
     }
 
-    return res.send({ message: 'Данные успешно обновлены', result: shipment });
+    return res.send({ message: 'Данные успешно обновлены', shipment });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(e);
