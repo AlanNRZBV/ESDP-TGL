@@ -13,6 +13,7 @@ export interface ShipmentData {
   weight: number;
   price: ShipmentKeys;
   trackerNumber: number;
+  delivery: boolean;
   isPaid: boolean;
 }
 

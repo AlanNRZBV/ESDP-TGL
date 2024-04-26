@@ -18,12 +18,10 @@ const ShipmentSchema = new Schema<ShipmentData>({
       message: 'User does not exist!',
     },
   },
-
   userMarketId: {
     type: Number,
     required: true,
   },
-
   pupId: {
     type: Schema.Types.ObjectId,
     ref: 'PUP',
@@ -41,14 +39,12 @@ const ShipmentSchema = new Schema<ShipmentData>({
       message: 'Такого ПВЗ нет в списке',
     },
   },
-
   status: {
     type: String,
     required: true,
     enum: ['КР_ОТПРАВЛЕНО', 'КР_ПРИБЫЛО', 'КНР_ОТПРАВЛЕНО', 'КНР_ПРИБЫЛО', 'ЗАВЕРШЕН', 'ОТКАЗ'],
     default: 'КНР_ПРИБЫЛО',
   },
-
   dimensions: {
     height: {
       type: Number,
@@ -63,12 +59,10 @@ const ShipmentSchema = new Schema<ShipmentData>({
       required: true,
     },
   },
-
   weight: {
     type: Number,
     required: true,
   },
-
   price: {
     usd: {
       type: Number,
@@ -79,12 +73,14 @@ const ShipmentSchema = new Schema<ShipmentData>({
       required: true,
     },
   },
-
   trackerNumber: {
     type: Number,
     required: true,
   },
-
+  delivery: {
+    type: Boolean,
+    default: false,
+  },
   isPaid: {
     type: Boolean,
     required: true,

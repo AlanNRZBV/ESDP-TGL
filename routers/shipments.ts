@@ -6,6 +6,7 @@ import Shipment from '../models/Shipment';
 import { ShipmentData, ShipmentKeys } from '../types/shipment.types';
 import Price from '../models/Price';
 import PUP from '../models/Pup';
+import shipment from '../models/Shipment';
 
 const shipmentsRouter = express.Router();
 
@@ -171,6 +172,30 @@ shipmentsRouter.put('/:id', auth, permit('admin'), async (req: RequestWithUser, 
       return res.status(422).send(e);
     }
     return next(e);
+  }
+});
+
+shipmentsRouter.patch('/:id/toggleDelivery', auth, async (req: RequestWithUser, res, next) => {
+  try {
+    const id = req.params.id;
+    const user = req.user;
+
+    const shipment = await Shipment.findById(id);
+
+    if (shipment?.userId.toString() === user?._id.toString()) {
+      const shipmentToUpdate = await Shipment.findOneAndUpdate(
+        { _id: id },
+        { delivery: !shipment?.delivery },
+        { new: true },
+      );
+      if (shipment?.delivery) {
+        return res.send({ message: 'Вы отказались от доставки', shipment: shipmentToUpdate });
+      }
+      return res.send({ message: 'Доставка успешно заказана', shipment: shipmentToUpdate });
+    }
+    return res.status(404).send({ error: 'Неверные данные' });
+  } catch (e) {
+    next(e);
   }
 });
 
