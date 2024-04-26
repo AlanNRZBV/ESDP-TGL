@@ -6,7 +6,6 @@ import Shipment from '../models/Shipment';
 import { ShipmentData, ShipmentKeys } from '../types/shipment.types';
 import Price from '../models/Price';
 import PUP from '../models/Pup';
-import shipment from '../models/Shipment';
 
 const shipmentsRouter = express.Router();
 
