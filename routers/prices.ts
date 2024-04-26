@@ -10,7 +10,7 @@ export const pricesRouter = Router();
 pricesRouter.get('/', auth, permit('super', 'admin'), async (_req, res, next) => {
   try {
     const price = await Price.findOne();
-    return res.send({ message: 'Данные о курсе валюта и цене за доставку', price });
+    return res.send({ message: 'Данные о курсе валюты и цене за доставку', price });
   } catch (e) {
     next(e);
   }
@@ -29,7 +29,9 @@ pricesRouter.post('/', auth, permit('super'), async (req, res, next) => {
       await price.save();
       return res.send({ message: 'Курс валюты и цена за доставку успешно установлены', price });
     } else {
-      return res.send({ message: 'В базе данных может быть только одна ценовая категория' });
+      return res
+        .status(422)
+        .send({ message: 'В базе данных может быть только одна ценовая категория' });
     }
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
@@ -59,8 +61,12 @@ pricesRouter.put('/:id', auth, permit('super', 'admin'), async (req, res, next) 
       { new: true },
     );
 
-    return res.send({ message: 'Данные успешно обновлены', price });
+    return res.send({ message: 'Данные успешно обновлены!', price });
   } catch (e) {
+    if (e instanceof mongoose.Error.CastError) {
+      e.message = 'Введите корректные числовые данные!';
+      return res.send(e);
+    }
     next(e);
   }
 });
