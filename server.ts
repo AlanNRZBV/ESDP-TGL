@@ -4,10 +4,11 @@ import mongoose from 'mongoose';
 import config from './config';
 import usersRouter from './routers/users';
 import shipmentsRouter from './routers/shipments';
-import warehouseRouter from './routers/warehouses';
+import warehousesRouter from './routers/warehouses';
 import { pricesRouter } from './routers/prices';
 import pupsRouter from './routers/pups';
 import regionsRouter from './routers/regions';
+import companyAddressesRouter from './routers/companyAddresses';
 
 const app = express();
 const port = 8000;
@@ -18,9 +19,10 @@ app.use(cors());
 app.use('/users', usersRouter);
 app.use('/shipments', shipmentsRouter);
 app.use('/pups', pupsRouter);
-app.use('/warehouse', warehouseRouter);
+app.use('/warehouse', warehousesRouter);
 app.use('/price', pricesRouter);
 app.use('/regions', regionsRouter);
+app.use('/company-addresses', companyAddressesRouter);
 
 const run = async () => {
   await mongoose.connect(config.mongoose.db);

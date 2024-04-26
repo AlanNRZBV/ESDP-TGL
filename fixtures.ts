@@ -7,6 +7,7 @@ import Pup from './models/Pup';
 import Shipment from './models/Shipment';
 import Warehouse from './models/Warehouse';
 import Region from './models/Region';
+import CompanyAddress from './models/CompanyAddress';
 
 const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
   try {
@@ -66,49 +67,49 @@ const run = async () => {
 
     const pups = await Pup.create([
       {
-        name: 'Pup№1',
+        name: 'ПВЗ№1',
         region: regions[0]._id,
         settlement: 'г.Бишкек',
         address: 'пр.Манаса 44',
         phoneNumber: '996505999774',
       },
       {
-        name: 'Pup№2',
+        name: 'ПВЗ№2',
         region: regions[1]._id,
         settlement: 'г.Талас',
         address: 'ул. Бердике Баатыра 191',
         phoneNumber: '996505999774',
       },
       {
-        name: 'Pup№3',
+        name: 'ПВЗ№3',
         region: regions[2]._id,
         settlement: 'г.Каракол',
         address: 'ул.Ленина 186/1',
         phoneNumber: '996505999774',
       },
       {
-        name: 'Pup№4',
+        name: 'ПВЗ№4',
         region: regions[3]._id,
         settlement: 'г.Нарын',
         address: 'ул.Чаначева 15',
         phoneNumber: '996505999774',
       },
       {
-        name: 'Pup№5',
+        name: 'ПВЗ№5',
         region: regions[4]._id,
         settlement: 'г.Джалал-Абад',
         address: 'ул.Кыргызской Республики 79',
         phoneNumber: '996505999774',
       },
       {
-        name: 'Pup№6',
+        name: 'ПВЗ№6',
         region: regions[5]._id,
         settlement: 'г.Ош',
         address: 'ул.Гапара Айтиева 45а',
         phoneNumber: '996505999774',
       },
       {
-        name: 'Pup№7',
+        name: 'ПВЗ№7',
         region: regions[6]._id,
         settlement: 'г.Баткен',
         address: 'ул.Раззакова 1',
@@ -328,6 +329,13 @@ const run = async () => {
         deliveryPrice: 5,
       },
     ]);
+
+    await CompanyAddress.create({
+      address: 'Test address string',
+      city: 'Bishkek',
+      district: 'Test district',
+      postCode: '720000',
+    });
 
     await db.close();
   } catch (error) {

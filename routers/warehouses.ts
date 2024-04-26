@@ -4,9 +4,9 @@ import permit from '../middleware/permit';
 import Warehouse from '../models/Warehouse';
 import { WarehouseTypes } from '../types/warehouse.types';
 
-const warehouseRouter = Router();
+const warehousesRouter = Router();
 
-warehouseRouter.get('/', auth, async (req, res, next) => {
+warehousesRouter.get('/', auth, async (req, res, next) => {
   try {
     const warehouse = await Warehouse.find();
     if (warehouse.length < 1) {
@@ -18,7 +18,7 @@ warehouseRouter.get('/', auth, async (req, res, next) => {
   }
 });
 
-warehouseRouter.post('/add', auth, permit('super'), async (req, res, next) => {
+warehousesRouter.post('/add', auth, permit('super'), async (req, res, next) => {
   try {
     const newWarehouse: WarehouseTypes = {
       name: req.body.name,
@@ -33,4 +33,4 @@ warehouseRouter.post('/add', auth, permit('super'), async (req, res, next) => {
     next(e);
   }
 });
-export default warehouseRouter;
+export default warehousesRouter;
