@@ -3,7 +3,7 @@ import mongoose, { FilterQuery } from 'mongoose';
 import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
 import Shipment from '../models/Shipment';
-import { ShipmentData, ShipmentKeys } from '../types/shipment.types';
+import { DeliveryData, ShipmentData, ShipmentKeys } from '../types/shipment.types';
 import Price from '../models/Price';
 import PUP from '../models/Pup';
 
@@ -184,13 +184,26 @@ shipmentsRouter.patch('/:id/toggleDelivery', auth, async (req: RequestWithUser, 
 
     const shipment = await Shipment.findById(id);
 
+    const deliveryData: DeliveryData = {
+      address: req.body.address,
+      phoneNumber: req.body.phoneNumber,
+      date: req.body.date,
+    };
+
     if (shipment?.userId.toString() === user?._id.toString()) {
       const shipmentToUpdate = await Shipment.findOneAndUpdate(
         { _id: id },
-        { delivery: !shipment?.delivery },
+        {
+          delivery: {
+            status: !shipment?.delivery.status,
+            address: deliveryData.address,
+            phoneNumber: deliveryData.phoneNumber,
+            date: deliveryData.date,
+          },
+        },
         { new: true },
       );
-      if (shipment?.delivery) {
+      if (shipment?.delivery.status) {
         return res.send({ message: 'Вы отказались от доставки', shipment: shipmentToUpdate });
       }
       return res.send({ message: 'Доставка успешно заказана', shipment: shipmentToUpdate });

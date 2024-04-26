@@ -78,8 +78,22 @@ const ShipmentSchema = new Schema<ShipmentData>({
     required: true,
   },
   delivery: {
-    type: Boolean,
-    default: false,
+    status: {
+      type: Boolean,
+      default: false,
+    },
+    date: {
+      type: String,
+      default: '',
+    },
+    address: {
+      type: String,
+      default: '',
+    },
+    phoneNumber: {
+      type: String,
+      default: '',
+    },
   },
   isPaid: {
     type: Boolean,

@@ -13,10 +13,21 @@ export interface ShipmentData {
   weight: number;
   price: ShipmentKeys;
   trackerNumber: number;
-  delivery: boolean;
+  delivery: {
+    status: boolean;
+    date: string;
+    address: string;
+    phoneNumber: string;
+  };
   isPaid: boolean;
 }
 
 interface ShipmentKeys {
   [key: string]: number;
+}
+
+export interface DeliveryData {
+  address: string;
+  phoneNumber: string;
+  date: string;
 }
