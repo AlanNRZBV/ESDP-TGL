@@ -90,7 +90,10 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
     const marketId = req.query.marketId as string;
 
     if (marketId) {
-      const shipments = await Shipment.find({ userMarketId: marketId });
+      const shipments = await Shipment.find({ userMarketId: marketId }).populate(
+        'pupId',
+        '_id name address settlement region phoneNumber',
+      );
       return res.send({ message: 'Список грузов одного пользователя', shipments });
     }
 
