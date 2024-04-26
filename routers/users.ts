@@ -81,11 +81,9 @@ usersRouter.get('/', async (req, res, next) => {
     if (role) {
       filter.role = role as string;
     }
-    const users = await (
-      Object.keys(filter).length > 0
-        ? User.find(filter).populate({ path: 'region', select: 'name' })
-        : User.find()
-    ).populate({ path: 'region', select: 'name' });
+    const users = await (Object.keys(filter).length > 0
+      ? User.find(filter).populate({ path: 'region', select: 'name' })
+      : User.find().populate({ path: 'region', select: 'name' }));
     res.send({ message: 'Данные о пользователях', users });
   } catch (e) {
     next(e);
@@ -95,11 +93,16 @@ usersRouter.get('/', async (req, res, next) => {
 usersRouter.get('/:id', async (req, res) => {
   try {
     const userId = req.params.id;
-    const user = await User.findById(userId).populate({ path: 'region', select: 'name' });
+    const user = await User.findById(userId)
+      .populate({
+        path: 'region',
+        select: 'name',
+      })
+      .populate({ path: 'pupID' });
     if (!user) {
       res.status(404).send({ message: 'Пользователь не найден!' });
     }
-    res.send(user);
+    res.send({ message: 'Данные о пользователях', user });
   } catch (error) {
     res.status(500).send({ message: 'Пользователь не найден!' });
   }
