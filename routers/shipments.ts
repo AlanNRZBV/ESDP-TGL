@@ -3,7 +3,7 @@ import mongoose, { FilterQuery } from 'mongoose';
 import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
 import Shipment from '../models/Shipment';
-import { ShipmentData, ShipmentKeys } from '../types/shipment.types';
+import { DeliveryData, ShipmentData, ShipmentKeys } from '../types/shipment.types';
 import Price from '../models/Price';
 import PUP from '../models/Pup';
 
@@ -82,10 +82,20 @@ shipmentsRouter.post(
   },
 );
 
-shipmentsRouter.get('/', auth, permit('admin', 'super'), async (req, res) => {
+shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
   try {
+    const user = req.user;
     const regionId = req.query.region as string;
     const orderByTrackingNumber = req.query.orderByTrackingNumber as string;
+    const marketId = req.query.marketId as string;
+
+    if (marketId) {
+      const shipments = await Shipment.find({ userMarketId: marketId }).populate(
+        'pupId',
+        '_id name address settlement region phoneNumber',
+      );
+      return res.send({ message: 'Список грузов одного пользователя', shipments });
+    }
 
     let filter: FilterQuery<ShipmentData> = {};
 
@@ -102,21 +112,30 @@ shipmentsRouter.get('/', auth, permit('admin', 'super'), async (req, res) => {
       return res.send(shipment);
     }
 
-    const shipments = await Shipment.find(filter).populate('userId', 'firstName lastName');
-    return res.send({ message: 'Список грузов', shipments });
+    if (user?.role === 'super' || user?.role === 'admin') {
+      const shipments = await Shipment.find(filter).populate('userId', 'firstName lastName');
+      return res.send({ message: 'Список грузов', shipments });
+    }
   } catch (e) {
     res.send(e);
   }
 });
 
-shipmentsRouter.delete('/:id', auth, permit('admin'), async (req, res, next) => {
+shipmentsRouter.delete('/:id', auth, async (req: RequestWithUser, res, next) => {
   try {
     const id = req.params.id;
+    const user = req.user;
 
     try {
       new mongoose.Types.ObjectId(id);
     } catch {
       return res.status(404).send({ error: 'Wrong ID!' });
+    }
+
+    const shipment = await Shipment.findById(id);
+
+    if (shipment?.userMarketId !== user?.marketId) {
+      return res.status(401).send({ message: 'Вы не имеете права удалять чужие грузы!' });
     }
 
     const result = await Shipment.findByIdAndDelete(id);
@@ -155,6 +174,43 @@ shipmentsRouter.put('/:id', auth, permit('admin'), async (req: RequestWithUser, 
       return res.status(422).send(e);
     }
     return next(e);
+  }
+});
+
+shipmentsRouter.patch('/:id/toggleDelivery', auth, async (req: RequestWithUser, res, next) => {
+  try {
+    const id = req.params.id;
+    const user = req.user;
+
+    const shipment = await Shipment.findById(id);
+
+    const deliveryData: DeliveryData = {
+      address: req.body.address,
+      phoneNumber: req.body.phoneNumber,
+      date: req.body.date,
+    };
+
+    if (shipment?.userId.toString() === user?._id.toString()) {
+      const shipmentToUpdate = await Shipment.findOneAndUpdate(
+        { _id: id },
+        {
+          delivery: {
+            status: !shipment?.delivery.status,
+            address: deliveryData.address,
+            phoneNumber: deliveryData.phoneNumber,
+            date: deliveryData.date,
+          },
+        },
+        { new: true },
+      );
+      if (shipment?.delivery.status) {
+        return res.send({ message: 'Вы отказались от доставки', shipment: shipmentToUpdate });
+      }
+      return res.send({ message: 'Доставка успешно заказана', shipment: shipmentToUpdate });
+    }
+    return res.status(404).send({ error: 'Неверные данные' });
+  } catch (e) {
+    next(e);
   }
 });
 
