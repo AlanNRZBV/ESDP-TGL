@@ -23,9 +23,7 @@ const WarehouseSchema = new Schema({
 
           const nationalNumberCN = parsedPhoneNumberCN.getNationalNumber();
 
-          return (
-            (countryCodeCN === 86 && nationalNumberCN?.toString().length === 11)
-          );
+          return countryCodeCN === 86 && nationalNumberCN?.toString().length === 11;
         } catch (error) {
           return false;
         }

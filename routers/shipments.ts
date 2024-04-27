@@ -3,7 +3,7 @@ import mongoose, { FilterQuery } from 'mongoose';
 import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
 import Shipment from '../models/Shipment';
-import { ShipmentData, ShipmentKeys } from '../types/shipment.types';
+import { DeliveryData, ShipmentData, ShipmentKeys } from '../types/shipment.types';
 import Price from '../models/Price';
 import PUP from '../models/Pup';
 
@@ -90,7 +90,10 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
     const marketId = req.query.marketId as string;
 
     if (marketId) {
-      const shipments = await Shipment.find({ userMarketId: marketId });
+      const shipments = await Shipment.find({ userMarketId: marketId }).populate(
+        'pupId',
+        '_id name address settlement region phoneNumber',
+      );
       return res.send({ message: 'Список грузов одного пользователя', shipments });
     }
 
@@ -171,6 +174,43 @@ shipmentsRouter.put('/:id', auth, permit('admin'), async (req: RequestWithUser, 
       return res.status(422).send(e);
     }
     return next(e);
+  }
+});
+
+shipmentsRouter.patch('/:id/toggleDelivery', auth, async (req: RequestWithUser, res, next) => {
+  try {
+    const id = req.params.id;
+    const user = req.user;
+
+    const shipment = await Shipment.findById(id);
+
+    const deliveryData: DeliveryData = {
+      address: req.body.address,
+      phoneNumber: req.body.phoneNumber,
+      date: req.body.date,
+    };
+
+    if (shipment?.userId.toString() === user?._id.toString()) {
+      const shipmentToUpdate = await Shipment.findOneAndUpdate(
+        { _id: id },
+        {
+          delivery: {
+            status: !shipment?.delivery.status,
+            address: deliveryData.address,
+            phoneNumber: deliveryData.phoneNumber,
+            date: deliveryData.date,
+          },
+        },
+        { new: true },
+      );
+      if (shipment?.delivery.status) {
+        return res.send({ message: 'Вы отказались от доставки', shipment: shipmentToUpdate });
+      }
+      return res.send({ message: 'Доставка успешно заказана', shipment: shipmentToUpdate });
+    }
+    return res.status(404).send({ error: 'Неверные данные' });
+  } catch (e) {
+    next(e);
   }
 });
 
