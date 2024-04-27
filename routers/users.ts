@@ -225,23 +225,10 @@ usersRouter.put('/update', auth, async (req: RequestWithUser, res, next) => {
   }
 });
 
-usersRouter.put('/update/:id', auth, permit('super'), async (req: RequestWithUser, res, next) => {
+usersRouter.patch('/update/:id', auth, permit('super'), async (req, res, next) => {
   try {
-    const itemId = req.params.id;
-    let roleToUpdate = req.body.role;
-
-    const existingUser = await User.findById(itemId);
-
-    if (!existingUser) {
-      return res.status(404).send({ message: 'Пользователь не найден!' });
-    }
-
-    if (existingUser.role !== 'admin' && existingUser.role !== 'manager') {
-      roleToUpdate = existingUser.role;
-    }
-
     const user = await User.updateOne(
-      { _id: itemId },
+      { _id: req.params.id },
       {
         $set: {
           email: req.body.email,
@@ -253,14 +240,21 @@ usersRouter.put('/update/:id', auth, permit('super'), async (req: RequestWithUse
           phoneNumber: req.body.phoneNumber,
           address: req.body.address,
           settlement: req.body.settlement,
-          role: roleToUpdate,
+          role: req.body.role,
         },
       },
       { new: true },
     );
+    if (user.matchedCount === 0) {
+      return res.status(404).send({ message: 'Пользователь не найден!' });
+    }
 
-    return res.send({ message: 'Данные успешно обновлены', user });
+    return res.send({ message: 'Данные пользователя успешно обновлены!' });
   } catch (e) {
+    if (e instanceof mongoose.Error.ValidationError) {
+      return res.status(422).send(e);
+    }
+
     next(e);
   }
 });
