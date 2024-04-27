@@ -109,7 +109,7 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
     if (orderByTrackingNumber) {
       const shipment = await Shipment.findOne({ trackerNumber: orderByTrackingNumber });
 
-      return res.send(shipment);
+      return res.send({message: 'Поиск по трекеру', shipment});
     }
 
     if (user?.role === 'super' || user?.role === 'admin') {
