@@ -32,9 +32,16 @@ pupsRouter.post('/', auth, permit('super'), async (req: RequestWithUser, res, ne
   }
 });
 
-pupsRouter.get('/', async (_req, res, next) => {
+pupsRouter.get('/', async (req, res, next) => {
   try {
-    const pups = await PUP.find().populate('region', 'name lang');
+    const regionId = req.query.region as string;
+    let pups;
+
+    if (regionId) {
+      pups = await PUP.find({ region: regionId }).populate('region', 'name lang');
+    } else {
+      pups = await PUP.find().populate('region', 'name lang');
+    }
 
     return res.send({ message: 'Список ПВЗ', pups });
   } catch (e) {
