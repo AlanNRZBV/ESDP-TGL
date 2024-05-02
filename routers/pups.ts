@@ -38,9 +38,9 @@ pupsRouter.get('/', async (req, res, next) => {
     let pups;
 
     if (regionId) {
-      pups = await PUP.find({ region: regionId }).populate('region', 'name lang');
+      pups = await PUP.find({ region: regionId }).populate('region', 'name lang').sort({ _id: -1 });
     } else {
-      pups = await PUP.find().populate('region', 'name lang');
+      pups = await PUP.find().populate('region', 'name lang').sort({ _id: -1 });
     }
 
     return res.send({ message: 'Список ПВЗ', pups });
@@ -64,7 +64,7 @@ pupsRouter.delete('/:id', auth, permit('super'), async (_req, res, next) => {
 pupsRouter.put('/:id', auth, permit('super'), async (req, res, next) => {
   try {
     const updateData: PupDataMutation = {
-      name: req.body.name,
+      region: req.body.region,
       settlement: req.body.settlement,
       address: req.body.address,
       phoneNumber: req.body.phoneNumber,
@@ -77,6 +77,9 @@ pupsRouter.put('/:id', auth, permit('super'), async (req, res, next) => {
 
     res.send({ message: 'Данные успешно обновлены' });
   } catch (e) {
+    if (e instanceof mongoose.Error.ValidationError) {
+      return res.status(422).send(e);
+    }
     next(e);
   }
 });

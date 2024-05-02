@@ -7,7 +7,7 @@ export interface PupData {
 }
 
 export interface PupDataMutation {
-  name: string;
+  region: string;
   settlement: string;
   address: string;
   phoneNumber: number;
