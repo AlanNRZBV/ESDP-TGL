@@ -27,12 +27,12 @@ const UserSchema = new mongoose.Schema({
 
         return !user;
       },
-      message: 'This user is already registered!',
+      message: 'Пользователь с такой почтой уже зарегистрирован',
     },
   },
   password: {
     type: String,
-    required: true,
+    required: [true, 'Поле не может быть пустым'],
   },
   pupID: {
     type: Schema.Types.ObjectId,
@@ -45,11 +45,11 @@ const UserSchema = new mongoose.Schema({
   },
   firstName: {
     type: String,
-    required: true,
+    required: [true, 'Поле не может быть пустым'],
   },
   lastName: {
     type: String,
-    required: true,
+    required: [true, 'Поле не может быть пустым'],
   },
   middleName: {
     type: String,
@@ -85,7 +85,7 @@ const UserSchema = new mongoose.Schema({
           return false;
         }
       },
-      message: 'Invalid phone number format',
+      message: 'Неверный формат',
     },
   },
   token: {
@@ -113,7 +113,7 @@ const UserSchema = new mongoose.Schema({
         const region = await Region.findById(value);
         return Boolean(region);
       },
-      message: 'VALIDATOR ERROR: Region does not exist!',
+      message: 'Такой ПВЗ не существует',
     },
   },
 });
