@@ -131,6 +131,23 @@ usersRouter.post('/sessions', async (req, res, next) => {
   }
 });
 
+usersRouter.post('/sessions/lastSession', async (req, res, next) => {
+  try {
+    const user = await User.findOne({ token: req.body.token });
+
+    if (!user) {
+      return res.status(422).send({ message: 'Ошибка! Попробуйте войти снова.' });
+    }
+
+    user.generateToken();
+    await user.save();
+
+    return res.send({ message: 'Вход по последней сессии:', user });
+  } catch (e) {
+    next(e);
+  }
+});
+
 usersRouter.delete('/sessions', async (req, res, next) => {
   try {
     const headerValue = req.get('Authorization');
