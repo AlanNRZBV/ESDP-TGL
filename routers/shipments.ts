@@ -88,7 +88,15 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
     const regionId = req.query.region as string;
     const orderByTrackingNumber = req.query.orderByTrackingNumber as string;
     const marketId = req.query.marketId as string;
+    const status = req.query.status as string;
 
+    if (marketId && status) {
+      const shipments = await Shipment.find({ status: status, userMarketId: marketId }).populate(
+        'pupId',
+        '_id name address settlement region phoneNumber',
+      );
+      return res.send({ message: 'История грузов одного пользователя', shipments });
+    }
     if (marketId) {
       const shipments = await Shipment.find({ userMarketId: marketId }).populate(
         'pupId',
@@ -109,7 +117,7 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
     if (orderByTrackingNumber) {
       const shipment = await Shipment.findOne({ trackerNumber: orderByTrackingNumber });
 
-      return res.send({message: 'Поиск по трекеру', shipment});
+      return res.send({ message: 'Поиск по трекеру', shipment });
     }
 
     if (user?.role === 'super' || user?.role === 'admin') {

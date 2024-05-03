@@ -19,7 +19,7 @@ warehousesRouter.get('/', auth, async (req, res, next) => {
   }
 });
 
-warehousesRouter.get('/:id', auth, async (req, res, next) =>{
+warehousesRouter.get('/:id', auth, async (req, res, next) => {
   try {
     let _id: Types.ObjectId;
     try {
@@ -56,7 +56,7 @@ warehousesRouter.post('/add', auth, permit('super'), async (req, res, next) => {
   }
 });
 
-warehousesRouter.patch('/:id', auth, permit('super'), async (req: RequestWithUser, res, next ) => {
+warehousesRouter.patch('/:id', auth, permit('super'), async (req: RequestWithUser, res, next) => {
   try {
     const result = await Warehouse.updateOne(
       { _id: req.params.id },
@@ -73,7 +73,7 @@ warehousesRouter.patch('/:id', auth, permit('super'), async (req: RequestWithUse
       return res.status(404).send({ message: 'Нет совпадений' });
     }
     return res.send({ message: 'Склад успешно обновлен' });
-  } catch(e) {
+  } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(e);
     }
