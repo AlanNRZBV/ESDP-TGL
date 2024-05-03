@@ -6,7 +6,6 @@ import Shipment from '../models/Shipment';
 import { DeliveryData, ShipmentData, ShipmentKeys } from '../types/shipment.types';
 import Price from '../models/Price';
 import PUP from '../models/Pup';
-import { fileURLToPath } from 'node:url';
 
 const shipmentsRouter = express.Router();
 
@@ -90,14 +89,8 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
     const orderByTrackingNumber = req.query.orderByTrackingNumber as string;
     const marketId = req.query.marketId as string;
     const status = req.query.status as string;
-    console.log(status);
-    console.log(req.query);
 
     if (marketId && status) {
-      const filter = {
-        status: status,
-        userMarketId: marketId,
-      };
       const shipments = await Shipment.find({ status: status, userMarketId: marketId }).populate(
         'pupId',
         '_id name address settlement region phoneNumber',
