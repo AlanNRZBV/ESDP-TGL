@@ -20,6 +20,7 @@ export interface ShipmentData {
     phoneNumber: string;
   };
   isPaid: boolean;
+  datetime: Date;
 }
 
 interface ShipmentKeys {

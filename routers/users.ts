@@ -29,7 +29,7 @@ usersRouter.post('/', async (req, res, next) => {
     user.generateToken();
     await user.save();
 
-    return res.send({ message: 'Регистрация прошла успешно', user });
+    return res.send({message: 'Регистрация прошла успешно', user});
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(e);
@@ -57,7 +57,7 @@ usersRouter.post('/staff', auth, permit('super'), async (req: RequestWithUser, r
     newUser.generateMarketID();
     newUser.generateToken();
     await newUser.save();
-    return res.send({ message: 'Пользователь добавлен', newUser });
+    return res.send({message: 'Пользователь добавлен', newUser});
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(e);
@@ -68,7 +68,7 @@ usersRouter.post('/staff', auth, permit('super'), async (req: RequestWithUser, r
 
 usersRouter.get('/', async (req, res, next) => {
   try {
-    const { region, settlement, role } = req.query;
+    const {region, settlement, role} = req.query;
 
     const filter: Filter = {};
 
@@ -82,9 +82,9 @@ usersRouter.get('/', async (req, res, next) => {
       filter.role = role as string;
     }
     const users = await (Object.keys(filter).length > 0
-      ? User.find(filter).populate({ path: 'region', select: 'name' })
-      : User.find().populate({ path: 'region', select: 'name' }));
-    res.send({ message: 'Данные о пользователях', users });
+      ? User.find(filter).populate({path: 'region', select: 'name'})
+      : User.find().populate({path: 'region', select: 'name'}));
+    res.send({message: 'Данные о пользователях', users});
   } catch (e) {
     next(e);
   }
@@ -98,34 +98,34 @@ usersRouter.get('/:id', async (req, res) => {
         path: 'region',
         select: 'name',
       })
-      .populate({ path: 'pupID' });
+      .populate({path: 'pupID'});
     if (!user) {
-      res.status(404).send({ message: 'Пользователь не найден!' });
+      res.status(404).send({message: 'Пользователь не найден!'});
     }
-    res.send({ message: 'Данные о пользователях', user });
+    res.send({message: 'Данные о пользователях', user});
   } catch (error) {
-    res.status(500).send({ message: 'Пользователь не найден!' });
+    res.status(500).send({message: 'Пользователь не найден!'});
   }
 });
 
 usersRouter.post('/sessions', async (req, res, next) => {
   try {
-    const user = await User.findOne({ email: req.body.email }).populate('region');
+    const user = await User.findOne({email: req.body.email}).populate('region');
 
     if (!user) {
-      return res.status(422).send({ message: 'Пользователь не найден!' });
+      return res.status(422).send({message: 'Пользователь не найден!'});
     }
 
     const isMatch = await user.checkPassword(req.body.password);
 
     if (!isMatch) {
-      return res.status(422).send({ message: 'Пароль или почта введены некорректно' });
+      return res.status(422).send({message: 'Пароль или почта введены некорректно'});
     }
 
     user.generateToken();
     await user.save();
 
-    return res.send({ message: 'Данные введены правильно', user });
+    return res.send({message: 'Данные введены правильно', user});
   } catch (e) {
     next(e);
   }
@@ -134,7 +134,7 @@ usersRouter.post('/sessions', async (req, res, next) => {
 usersRouter.delete('/sessions', async (req, res, next) => {
   try {
     const headerValue = req.get('Authorization');
-    const successMessage = { message: 'Успешная операция!' };
+    const successMessage = {message: 'Успешная операция!'};
 
     if (!headerValue) {
       return res.send(successMessage);
@@ -146,7 +146,7 @@ usersRouter.delete('/sessions', async (req, res, next) => {
       return res.send(successMessage);
     }
 
-    const user = await User.findOne({ token });
+    const user = await User.findOne({token});
 
     if (!user) {
       return res.send(successMessage);
@@ -173,7 +173,7 @@ usersRouter.delete(
       const user = await User.findById(itemId);
 
       if (!user) {
-        return res.status(404).send({ message: 'Пользователь не найден!' });
+        return res.status(404).send({message: 'Пользователь не найден!'});
       }
 
       if (user.role === 'client' && role === 'admin') {
@@ -181,45 +181,63 @@ usersRouter.delete(
       } else if (role === 'super') {
         await User.findByIdAndDelete(itemId);
       } else {
-        return res.status(404).send({ message: 'У вас нет полномочий!' });
+        return res.status(404).send({message: 'У вас нет полномочий!'});
       }
 
-      res.send({ message: 'Пользователь был удален' });
+      res.send({message: 'Пользователь был удален'});
     } catch (e) {
       next(e);
     }
   },
 );
 
-usersRouter.put('/update', auth, async (req: RequestWithUser, res, next) => {
+usersRouter.put('/update/current/user/:id', auth, async (req: RequestWithUser, res, next) => {
   try {
-    const currentUser = req.user;
+    const currentUser = req.params.id;
 
-    const userToUpdate = await User.findById(currentUser?.id);
+    const userToUpdate = await User.findById(currentUser);
 
     if (!userToUpdate) {
-      return res.status(404).send({ message: 'Пользователь не найден!' });
+      return res.status(404).send({message: 'Пользователь не найден!'});
     }
 
-    const user = await User.updateOne(
-      { _id: currentUser?._id },
-      {
-        $set: {
-          email: req.body.email,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          middleName: req.body.middleName,
-          pupID: req.body.pupID,
-          region: req.body.region,
-          phoneNumber: req.body.phoneNumber,
-          address: req.body.address,
-          settlement: req.body.settlement,
-        },
-      },
-      { new: true },
-    );
+    const updatedFields = {
+      email: req.body.email,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      middleName: req.body.middleName,
+      pupID: req.body.pupID,
+      region: req.body.region,
+      phoneNumber: req.body.phoneNumber,
+      address: req.body.address,
+      settlement: req.body.settlement,
+    };
 
-    return res.send({ message: 'Данные успешно обновлены', user });
+    // Проверяем наличие данных в req.body перед их использованием
+    // ...
+
+    // Обновляем пользователя и получаем результат операции
+    const updatedUser = await User.findByIdAndUpdate(currentUser, updatedFields, {new: true});
+
+    // const user = await User.updateOne(
+    //   { _id: currentUser },
+    //   {
+    //     $set: {
+    //       email: req.body.email,
+    //       firstName: req.body.firstName,
+    //       lastName: req.body.lastName,
+    //       middleName: req.body.middleName,
+    //       pupID: req.body.pupID,
+    //       region: req.body.region,
+    //       phoneNumber: req.body.phoneNumber,
+    //       address: req.body.address,
+    //       settlement: req.body.settlement,
+    //     },
+    //   },
+    //   { new: true },
+    // );
+
+    return res.send({message: 'Данные успешно обновлены', updatedUser});
   } catch (e) {
     next(e);
   }
@@ -228,7 +246,7 @@ usersRouter.put('/update', auth, async (req: RequestWithUser, res, next) => {
 usersRouter.patch('/update/:id', auth, permit('super'), async (req, res, next) => {
   try {
     const user = await User.updateOne(
-      { _id: req.params.id },
+      {_id: req.params.id},
       {
         $set: {
           email: req.body.email,
@@ -243,13 +261,13 @@ usersRouter.patch('/update/:id', auth, permit('super'), async (req, res, next) =
           role: req.body.role,
         },
       },
-      { new: true },
+      {new: true},
     );
     if (user.matchedCount === 0) {
-      return res.status(404).send({ message: 'Пользователь не найден!' });
+      return res.status(404).send({message: 'Пользователь не найден!'});
     }
 
-    return res.send({ message: 'Данные пользователя успешно обновлены!' });
+    return res.send({message: 'Данные пользователя успешно обновлены!'});
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
       return res.status(422).send(e);
@@ -266,12 +284,12 @@ usersRouter.put('/admin/:id', auth, permit('admin'), async (req: RequestWithUser
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).send({ message: 'Пользователь не найден!' });
+      return res.status(404).send({message: 'Пользователь не найден!'});
     }
 
     if (user.role === 'client' || user.role === 'manager') {
       const user = await User.updateOne(
-        { _id: userId },
+        {_id: userId},
         {
           $set: {
             email: req.body.email,
@@ -286,9 +304,9 @@ usersRouter.put('/admin/:id', auth, permit('admin'), async (req: RequestWithUser
           },
         },
       );
-      return res.send({ message: 'Данные успешно обновлены', user });
+      return res.send({message: 'Данные успешно обновлены', user});
     } else {
-      return res.status(404).send({ message: 'У вас нет полномочий!' });
+      return res.status(404).send({message: 'У вас нет полномочий!'});
     }
   } catch (e) {
     next(e);
