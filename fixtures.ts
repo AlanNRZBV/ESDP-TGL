@@ -8,6 +8,7 @@ import Shipment from './models/Shipment';
 import Warehouse from './models/Warehouse';
 import Region from './models/Region';
 import CompanyAddress from './models/CompanyAddress';
+import dayjs from 'dayjs';
 
 const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
   try {
@@ -232,13 +233,14 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
+        datetime: '12.12.12',
       },
       {
         userId: users[3]._id,
         pupId: pups[0],
         userMarketId: users[3].marketId,
         status: 'КНР_ПРИБЫЛО',
-        trackerNumber: 123456711,
+        trackerNumber: 123456789,
         dimensions: {
           height: 1000,
           width: 1000,
@@ -250,60 +252,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
-      },
-      {
-        userId: users[3]._id,
-        pupId: pups[0],
-        userMarketId: users[3].marketId,
-        status: 'ЗАВЕРШЕН',
-        trackerNumber: 123456765,
-        dimensions: {
-          height: 1000,
-          width: 1000,
-          length: 1000,
-        },
-        weight: 1423,
-        price: {
-          usd: 1600,
-          som: 10000,
-        },
-        isPaid: false,
-      },
-      {
-        userId: users[3]._id,
-        pupId: pups[0],
-        userMarketId: users[3].marketId,
-        status: 'ЗАВЕРШЕН',
-        trackerNumber: 123456717,
-        dimensions: {
-          height: 1000,
-          width: 1000,
-          length: 1000,
-        },
-        weight: 14,
-        price: {
-          usd: 1600,
-          som: 10000,
-        },
-        isPaid: false,
-      },
-      {
-        userId: users[3]._id,
-        pupId: pups[0],
-        userMarketId: users[3].marketId,
-        status: 'ЗАВЕРШЕН',
-        trackerNumber: 123433717,
-        dimensions: {
-          height: 1000,
-          width: 1000,
-          length: 1000,
-        },
-        weight: 14,
-        price: {
-          usd: 1600,
-          som: 10000,
-        },
-        isPaid: false,
+        datetime: dayjs('2024-04-01T17:59:59.999Z').toDate(),
       },
       {
         userId: users[4]._id,
@@ -322,6 +271,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
+        datetime: dayjs('2024-03-21T17:59:59.999Z').toDate(),
       },
       {
         userId: users[5]._id,
@@ -340,6 +290,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
+        datetime: dayjs('2024-04-01T17:59:59.999Z').toDate(),
       },
       {
         userId: users[5]._id,
@@ -358,6 +309,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
+        datetime: '12.12.12',
       },
       {
         userId: users[6]._id,
@@ -376,6 +328,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: true,
+        datetime: '12.12.12',
       },
       {
         userId: users[6]._id,
@@ -394,9 +347,9 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
+        datetime: '12.12.12',
       },
     ]);
-
     await Price.create([
       {
         exchangeRate: 88,

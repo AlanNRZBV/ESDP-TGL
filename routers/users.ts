@@ -83,7 +83,9 @@ usersRouter.get('/', async (req, res, next) => {
     }
     const users = await (Object.keys(filter).length > 0
       ? User.find(filter).populate({ path: 'region', select: 'name' })
-      : User.find().populate({ path: 'region', select: 'name' }).populate({path: 'pupID', select: 'name address'}));
+      : User.find()
+          .populate({ path: 'region', select: 'name' })
+          .populate({ path: 'pupID', select: 'name address' }));
     res.send({ message: 'Данные о пользователях', users });
   } catch (e) {
     next(e);
@@ -98,7 +100,7 @@ usersRouter.get('/:id', async (req, res) => {
         path: 'region',
         select: 'name',
       })
-      .populate({ path: 'pupID', select: 'name address'});
+      .populate({ path: 'pupID', select: 'name address' });
     if (!user) {
       res.status(404).send({ message: 'Пользователь не найден!' });
     }
@@ -233,8 +235,10 @@ usersRouter.put('/update', auth, async (req: RequestWithUser, res, next) => {
           settlement: req.body.settlement,
         },
       },
-      { new: true }
-    ).populate('region').populate('pupID');
+      { new: true },
+    )
+      .populate('region')
+      .populate('pupID');
 
     return res.send({ message: 'Данные успешно обновлены', user });
   } catch (e) {

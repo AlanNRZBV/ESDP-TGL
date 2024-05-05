@@ -100,6 +100,10 @@ const ShipmentSchema = new Schema<ShipmentData>({
     required: true,
     default: false,
   },
+  datetime: {
+    type: Date,
+    required: true,
+  },
 });
 
 const Shipment = mongoose.model('Shipment', ShipmentSchema);

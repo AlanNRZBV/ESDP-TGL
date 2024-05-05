@@ -6,8 +6,15 @@ import Shipment from '../models/Shipment';
 import { DeliveryData, ShipmentData, ShipmentKeys } from '../types/shipment.types';
 import Price from '../models/Price';
 import PUP from '../models/Pup';
+import dayjs from 'dayjs';
 
 const shipmentsRouter = express.Router();
+
+const startOfLastMonth = dayjs().subtract(1, 'month').startOf('month').toDate();
+const endOfLastMonth = dayjs().subtract(1, 'month').endOf('month').toDate();
+
+const startOfYear = dayjs().startOf('year').toDate();
+const endOfYear = dayjs().endOf('year').toDate();
 
 const countWeight = (height: number, width: number, length: number, weight: number) => {
   let totalWeight: number;
@@ -86,17 +93,11 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
   try {
     const user = req.user;
     const regionId = req.query.region as string;
+    const pupId = req.query.pupId as string;
+    const datetime = req.query.datetime as string;
     const orderByTrackingNumber = req.query.orderByTrackingNumber as string;
     const marketId = req.query.marketId as string;
-    const status = req.query.status as string;
 
-    if (marketId && status) {
-      const shipments = await Shipment.find({ status: status, userMarketId: marketId }).populate(
-        'pupId',
-        '_id name address settlement region phoneNumber',
-      );
-      return res.send({ message: 'История грузов одного пользователя', shipments });
-    }
     if (marketId) {
       const shipments = await Shipment.find({ userMarketId: marketId }).populate(
         'pupId',
@@ -120,8 +121,35 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
       return res.send({ message: 'Поиск по трекеру', shipment });
     }
 
-    if (user?.role === 'super' || user?.role === 'admin') {
-      const shipments = await Shipment.find(filter).populate('userId', 'firstName lastName');
+    if (pupId) {
+      if (datetime === 'month') {
+        const shipments = await Shipment.find({
+          pupId,
+          datetime: { $gte: startOfLastMonth, $lte: endOfLastMonth },
+        })
+          .sort({ datetime: -1 })
+          .limit(30);
+        return res.send({ message: 'Список грузов за последний месяц', shipments });
+      }
+
+      if (datetime === 'year') {
+        const shipments = await Shipment.find({
+          pupId,
+          datetime: { $gte: startOfYear, $lte: endOfYear },
+        })
+          .sort({ datetime: -1 })
+          .limit(30);
+
+        return res.send({ message: 'Список грузов за последний год', shipments });
+      }
+      const shipments = await Shipment.find({ pupId }).limit(30);
+      return res.send({ message: 'Список грузов', shipments });
+    }
+
+    if (user?.role === 'super' || user?.role === 'admin' || user?.role === 'manager') {
+      const shipments = await Shipment.find(filter)
+        .populate('userId', 'firstName lastName')
+        .limit(30);
       return res.send({ message: 'Список грузов', shipments });
     }
   } catch (e) {
