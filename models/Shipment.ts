@@ -103,6 +103,7 @@ const ShipmentSchema = new Schema<ShipmentData>({
   datetime: {
     type: Date,
     required: true,
+    default: () => new Date(),
   },
 });
 
