@@ -233,7 +233,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
-        datetime: '12.12.12',
+        datetime: Date.now(),
       },
       {
         userId: users[3]._id,
@@ -252,7 +252,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
-        datetime: dayjs('2024-04-01T17:59:59.999Z').toDate(),
+        datetime: Date.now(),
       },
       {
         userId: users[4]._id,
@@ -271,7 +271,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
-        datetime: dayjs('2024-03-21T17:59:59.999Z').toDate(),
+        datetime: Date.now(),
       },
       {
         userId: users[5]._id,
@@ -290,7 +290,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
-        datetime: dayjs('2024-04-01T17:59:59.999Z').toDate(),
+        datetime: Date.now(),
       },
       {
         userId: users[5]._id,
@@ -309,7 +309,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
-        datetime: '12.12.12',
+        datetime: Date.now(),
       },
       {
         userId: users[6]._id,
@@ -328,7 +328,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: true,
-        datetime: '12.12.12',
+        datetime: Date.now(),
       },
       {
         userId: users[6]._id,
@@ -347,7 +347,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
-        datetime: '12.12.12',
+        datetime: Date.now(),
       },
     ]);
     await Price.create([
