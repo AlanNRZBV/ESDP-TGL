@@ -9,6 +9,8 @@ import Warehouse from './models/Warehouse';
 import Region from './models/Region';
 import CompanyAddress from './models/CompanyAddress';
 import dayjs from 'dayjs';
+import Socials from './routers/socials';
+import Social from './models/Social';
 
 const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
   try {
@@ -363,6 +365,21 @@ const run = async () => {
       district: 'Test district',
       postCode: '720000',
     });
+
+    await Social.create([
+      {
+        link: 'https://www.instagram.com/cargo.878_kg',
+        image: 'fixtures/images/inst.png',
+      },
+      {
+        link: 'https://wa.me/996222601960?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5',
+        image: 'fixtures/images/whatsapp.png',
+      },
+      {
+        link: 'https://www.tiktok.com/@techgear.logistics',
+        image: 'fixtures/images/tt.png',
+      },
+    ]);
 
     await db.close();
   } catch (error) {
