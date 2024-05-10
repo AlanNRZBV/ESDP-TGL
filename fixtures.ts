@@ -134,6 +134,7 @@ const run = async () => {
         token: crypto.randomUUID(),
         role: 'super',
         address: 'Чуйкова 122',
+        settlement: 'Бишкек',
       },
       {
         email: 'admin@gmail.com',
@@ -148,6 +149,7 @@ const run = async () => {
         token: crypto.randomUUID(),
         role: 'admin',
         address: 'Чуйкова 122',
+        settlement: 'Нарын',
       },
       {
         email: 'manager@gmail.com',
@@ -162,6 +164,7 @@ const run = async () => {
         token: crypto.randomUUID(),
         role: 'manager',
         address: 'Чуйкова 122',
+        settlement: 'Нарын',
       },
       {
         email: 'user1@gmail.com',
@@ -175,6 +178,7 @@ const run = async () => {
         region: regions[3]._id,
         token: crypto.randomUUID(),
         address: 'Чуйкова 122',
+        settlement: 'Талас',
       },
       {
         email: 'user2@gmail.com',
@@ -188,6 +192,7 @@ const run = async () => {
         region: regions[4]._id,
         token: crypto.randomUUID(),
         address: 'Чуйкова 122',
+        settlement: 'Бишкек',
       },
       {
         email: 'user3@gmail.com',
@@ -201,6 +206,7 @@ const run = async () => {
         region: regions[5]._id,
         token: crypto.randomUUID(),
         address: 'Чуйкова 122',
+        settlement: 'Нарын',
       },
       {
         email: 'user4@gmail.com',
@@ -214,6 +220,7 @@ const run = async () => {
         region: regions[6]._id,
         token: crypto.randomUUID(),
         address: 'Чуйкова 122',
+        settlement: 'Ош',
       },
     ]);
 
