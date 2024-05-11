@@ -1,4 +1,5 @@
 export interface SocialData {
+  name: string;
   link: string;
-  image: string | null;
+  image: string | null | undefined;
 }
