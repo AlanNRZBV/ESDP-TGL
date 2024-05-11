@@ -24,6 +24,7 @@ const run = async () => {
     await mongoose.connect(config.mongoose.db);
     const db = mongoose.connection;
 
+
     const collections = [
       'users',
       'pups',
