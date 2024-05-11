@@ -148,7 +148,7 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
 
     if (user?.role === 'super' || user?.role === 'admin' || user?.role === 'manager') {
       const shipments = await Shipment.find(filter)
-        .populate('userId', 'firstName lastName')
+        .populate('userId', 'firstName lastName').populate('pupId', '_id name address settlement region phoneNumber')
         .limit(30);
       return res.send({ message: 'Список грузов', shipments });
     }
