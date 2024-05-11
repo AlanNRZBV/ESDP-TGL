@@ -10,6 +10,8 @@ import pupsRouter from './routers/pups';
 import regionsRouter from './routers/regions';
 import companyAddressesRouter from './routers/companyAddresses';
 import socialsRouter from './routers/socials';
+import priceList from './models/PriceList';
+import priceListsRouter from './routers/priceLists';
 
 const app = express();
 const port = 8000;
@@ -25,6 +27,7 @@ app.use('/price', pricesRouter);
 app.use('/regions', regionsRouter);
 app.use('/company-addresses', companyAddressesRouter);
 app.use('/socials', socialsRouter);
+app.use('/price-lists', priceListsRouter);
 
 const run = async () => {
   await mongoose.connect(config.mongoose.db);
