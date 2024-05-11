@@ -8,9 +8,8 @@ import Shipment from './models/Shipment';
 import Warehouse from './models/Warehouse';
 import Region from './models/Region';
 import CompanyAddress from './models/CompanyAddress';
-import dayjs from 'dayjs';
-import Socials from './routers/socials';
 import Social from './models/Social';
+import PriceList from './models/PriceList';
 
 const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
   try {
@@ -25,7 +24,16 @@ const run = async () => {
     await mongoose.connect(config.mongoose.db);
     const db = mongoose.connection;
 
-    const collections = ['users', 'pups', 'warehouses', 'prices', 'regions', 'shipments'];
+    const collections = [
+      'users',
+      'pups',
+      'warehouses',
+      'prices',
+      'regions',
+      'shipments',
+      'price-lists',
+      'socials',
+    ];
 
     for (const collectionName of collections) {
       await dropCollection(db, collectionName);
@@ -378,6 +386,155 @@ const run = async () => {
       {
         link: 'https://www.tiktok.com/@techgear.logistics',
         image: 'fixtures/images/tt.png',
+      },
+    ]);
+
+    await PriceList.create([
+      {
+        name: 'Хозтовары',
+        ranges: [
+          {
+            range: '0-80',
+            value: 3.7,
+          },
+          {
+            range: '110-120',
+            value: 3.6,
+          },
+          {
+            range: '120-130',
+            value: 3.5,
+          },
+          {
+            range: '130-140',
+            value: 3.4,
+          },
+          {
+            range: '140-150',
+            value: 3.3,
+          },
+          {
+            range: '150-160',
+            value: 3.2,
+          },
+          {
+            range: '160-170',
+            value: 3.1,
+          },
+          {
+            range: '170-180',
+            value: 3,
+          },
+          {
+            range: '180-190',
+            value: 2.9,
+          },
+          {
+            range: '190-200',
+            value: 2.8,
+          },
+          {
+            range: '200-250',
+            value: 2.7,
+          },
+          {
+            range: '250-300',
+            value: 2.6,
+          },
+          {
+            range: '300-350',
+            value: 2.5,
+          },
+          {
+            range: '350-400',
+            value: 2.4,
+          },
+          {
+            range: '400-500',
+            value: 2.3,
+          },
+          {
+            range: '500-600',
+            value: 2.3,
+          },
+          {
+            range: '600-800',
+            value: 2.2,
+          },
+          {
+            range: '800-1000',
+            value: 2.1,
+          },
+          {
+            range: '1000-9999',
+            value: 2,
+          },
+        ],
+      },
+      {
+        name: 'Одежда',
+        ranges: [
+          {
+            range: '0-80',
+            value: 4,
+          },
+          {
+            range: '110-120',
+            value: 4.7,
+          },
+          {
+            range: '120-130',
+            value: 4.6,
+          },
+          {
+            range: '130-140',
+            value: 4.5,
+          },
+          {
+            range: '140-150',
+            value: 4.4,
+          },
+          {
+            range: '150-160',
+            value: 4.3,
+          },
+          {
+            range: '160-170',
+            value: 4.2,
+          },
+          {
+            range: '170-180',
+            value: 4.1,
+          },
+          {
+            range: '180-190',
+            value: 4,
+          },
+          {
+            range: '190-200',
+            value: 3.9,
+          },
+          {
+            range: '200-250',
+            value: 3.8,
+          },
+          {
+            range: '250-300',
+            value: 3.7,
+          },
+          {
+            range: '300-350',
+            value: 4,
+          },
+          {
+            range: '350-400',
+            value: 4.1,
+          },
+          {
+            range: '400-5000',
+            value: 4.2,
+          },
+        ],
       },
     ]);
 
