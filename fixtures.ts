@@ -384,14 +384,17 @@ const run = async () => {
 
     await Social.create([
       {
+        name: 'Instagram',
         link: 'https://www.instagram.com/cargo.878_kg',
         image: 'fixtures/images/inst.png',
       },
       {
+        name: 'WhatsApp',
         link: 'https://wa.me/996222601960?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5',
         image: 'fixtures/images/whatsapp.png',
       },
       {
+        name: 'TikTok',
         link: 'https://www.tiktok.com/@techgear.logistics',
         image: 'fixtures/images/tt.png',
       },

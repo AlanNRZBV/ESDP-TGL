@@ -5,6 +5,8 @@ import permit from '../middleware/permit';
 import { imageUpload } from '../multer';
 import { SocialData } from '../types/socials.types';
 import * as fs from 'fs';
+import { Types } from 'mongoose';
+import Warehouse from '../models/Warehouse';
 
 const socialsRouter = Router();
 
@@ -22,6 +24,27 @@ socialsRouter.get('/', async (req, res, next) => {
   }
 });
 
+socialsRouter.get('/:id', async(req, res, next) => {
+  try {
+    let _id: Types.ObjectId;
+    try {
+      _id = new Types.ObjectId(req.params.id);
+    } catch {
+      return res.status(404).send({ error: 'Неправильный ID' });
+    }
+
+    const social = await Social.findById(_id);
+
+    if (!social) {
+      return res.status(404).send({ error: 'Ни одной социальной сети не было найдено' });
+    }
+
+    res.send(social);
+  } catch (e) {
+    next(e);
+  }
+})
+
 socialsRouter.post(
   '/',
   auth,
@@ -30,6 +53,7 @@ socialsRouter.post(
   async (req, res, next) => {
     try {
       const socialData: SocialData = {
+        name: req.body.name,
         link: req.body.link,
         image: req.file ? req.file.filename : null,
       };
@@ -49,6 +73,12 @@ socialsRouter.patch(
   imageUpload.single('image'),
   async (req, res, next) => {
     try {
+      let image: string | undefined | null = undefined;
+      if (req.body.image === 'delete') {
+        image = null;
+      } else if (req.file) {
+        image = req.file.filename;
+      }
       const filter = req.params.id;
       const isExists = await Social.findById(filter);
 
@@ -57,8 +87,9 @@ socialsRouter.patch(
       }
 
       const updateData: SocialData = {
+        name: req.body.name,
         link: req.body.link,
-        image: req.file ? req.file.filename : null,
+        image: image,
       };
 
       const updatedSocial = await Social.findOneAndUpdate({ _id: filter }, updateData, {

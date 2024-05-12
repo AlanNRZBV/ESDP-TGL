@@ -1,6 +1,10 @@
 import { model, Schema } from 'mongoose';
 
 const SocialSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
   link: {
     type: String,
     required: true,
