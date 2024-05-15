@@ -128,7 +128,8 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
           datetime: { $gte: startOfLastMonth, $lte: endOfLastMonth },
         })
           .sort({ datetime: -1 })
-          .limit(30);
+          .limit(30)
+          .populate('userId', 'firstName');
         return res.send({ message: 'Список грузов за последний месяц', shipments });
       }
 
@@ -138,17 +139,19 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
           datetime: { $gte: startOfYear, $lte: endOfYear },
         })
           .sort({ datetime: -1 })
-          .limit(30);
+          .limit(30)
+          .populate('userId', 'firstName');
 
         return res.send({ message: 'Список грузов за последний год', shipments });
       }
-      const shipments = await Shipment.find({ pupId }).limit(30);
+      const shipments = await Shipment.find({ pupId }).limit(30).populate('userId', 'firstName');
       return res.send({ message: 'Список грузов', shipments });
     }
 
     if (user?.role === 'super' || user?.role === 'admin' || user?.role === 'manager') {
       const shipments = await Shipment.find(filter)
-        .populate('userId', 'firstName lastName').populate('pupId', '_id name address settlement region phoneNumber')
+        .populate('userId', 'firstName lastName')
+        .populate('pupId', '_id name address settlement region phoneNumber')
         .limit(30);
       return res.send({ message: 'Список грузов', shipments });
     }
