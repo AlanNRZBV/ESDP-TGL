@@ -5,6 +5,7 @@ import { PhoneNumberUtil } from 'google-libphonenumber';
 import { UserFields, UserModel } from '../types/user.types';
 import PUP from './Pup';
 import Region from './Region';
+// import Pup from './Pup';
 
 const SALT_WORK_fACTOR = 10;
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -38,10 +39,18 @@ const UserSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'PUP',
     required: true,
-    validate: async (value: Types.ObjectId) => {
-      const pup = await PUP.findById(value);
-      return Boolean(pup);
+
+    validator: {
+      validate: async (value: Types.ObjectId) => {
+        const region = await PUP.findById(value);
+        return Boolean(region);
+      },
+      message: 'Такой ПВЗ не существует',
     },
+    // validate: async (value: Types.ObjectId) => {
+    //   const pup = await PUP.findById(value);
+    //   return Boolean(pup);
+    // },
   },
   firstName: {
     type: String,
@@ -94,9 +103,11 @@ const UserSchema = new mongoose.Schema({
   },
   settlement: {
     type: String,
+    required: true,
   },
   address: {
     type: String,
+    required: true,
   },
   role: {
     type: String,

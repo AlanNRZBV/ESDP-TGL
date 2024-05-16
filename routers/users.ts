@@ -23,12 +23,15 @@ usersRouter.post('/', async (req, res, next) => {
       settlement: req.body.settlement,
     };
 
-    const user = new User(userData);
+    const userReg = new User(userData);
 
-    user.generateMarketID();
-    user.generateToken();
-    await user.save();
+    userReg.generateMarketID();
+    userReg.generateToken();
+    await userReg.save();
 
+    const user = await User.findById(userReg._id)
+      .populate({ path: 'region', select: 'name' })
+      .populate({ path: 'pupID', select: 'name address' });
     return res.send({ message: 'Регистрация прошла успешно', user });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
@@ -86,7 +89,7 @@ usersRouter.get('/', async (req, res, next) => {
       : User.find()
           .populate({ path: 'region', select: 'name' })
           .populate({ path: 'pupID', select: 'name address' }));
-    res.send({ message: 'Данные о пользователях', users });
+    return res.send({ message: 'Данные о пользователях', users });
   } catch (e) {
     next(e);
   }
