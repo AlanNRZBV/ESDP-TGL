@@ -97,11 +97,9 @@ const UserSchema = new mongoose.Schema({
   },
   settlement: {
     type: String,
-    required: true,
   },
   address: {
     type: String,
-    required: true,
   },
   role: {
     type: String,
