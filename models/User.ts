@@ -38,9 +38,12 @@ const UserSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'PUP',
     required: true,
-    validate: async (value: Types.ObjectId) => {
-      const pup = await PUP.findById(value);
-      return Boolean(pup);
+    validator: {
+      validate: async (value: Types.ObjectId) => {
+        const region = await PUP.findById(value);
+        return Boolean(region);
+      },
+      message: 'Такого ПВЗ не существует',
     },
   },
   firstName: {
@@ -113,7 +116,7 @@ const UserSchema = new mongoose.Schema({
         const region = await Region.findById(value);
         return Boolean(region);
       },
-      message: 'Такой ПВЗ не существует',
+      message: 'Такого региона не существует',
     },
   },
 });
