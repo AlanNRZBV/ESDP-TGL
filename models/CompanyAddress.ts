@@ -2,6 +2,7 @@ import { model, Schema } from 'mongoose';
 
 const CompanyAddressSchema = new Schema({
   address: {
+    unique: true,
     type: String,
     required: true,
   },

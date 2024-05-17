@@ -7,7 +7,7 @@ import { PriceType } from '../types/price.types';
 
 export const pricesRouter = Router();
 
-pricesRouter.get('/', auth, permit('super', 'admin'), async (_req, res, next) => {
+pricesRouter.get('/', auth, permit('super', 'admin', 'manager'), async (_req, res, next) => {
   try {
     const price = await Price.findOne();
     return res.send({ message: 'Данные о курсе валюты и цене за доставку', price });
