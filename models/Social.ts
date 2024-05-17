@@ -6,6 +6,7 @@ const SocialSchema = new Schema({
     required: true,
   },
   link: {
+    unique: true,
     type: String,
     required: true,
   },
