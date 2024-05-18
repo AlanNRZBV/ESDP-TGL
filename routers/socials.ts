@@ -93,6 +93,9 @@ socialsRouter.patch(
       });
       return res.send({ message: 'Данные были успешно обновлены', socials: updatedSocial });
     } catch (e) {
+      if (e instanceof mongoose.Error.ValidationError || e instanceof mongoose.Error.CastError) {
+        return res.status(422).send(e);
+      }
       next(e);
     }
   },
