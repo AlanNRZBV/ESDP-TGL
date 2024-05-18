@@ -95,6 +95,19 @@ usersRouter.get('/', async (req, res, next) => {
   }
 });
 
+usersRouter.get('/clients', auth, permit('admin', 'manager', 'super'), async (req, res, next) => {
+  try {
+    const clients = await User.find({ role: 'client' }).populate('region').populate('pupID');
+    const isEmpty = clients.length < 1;
+    if (isEmpty) {
+      return res.status(404).send({ message: 'Нет клиентов', clients: clients });
+    }
+    return res.send({ message: 'Клиенты успешно найдены', clients });
+  } catch (e) {
+    next(e);
+  }
+});
+
 usersRouter.get('/:id', async (req, res) => {
   try {
     const userId = req.params.id;
