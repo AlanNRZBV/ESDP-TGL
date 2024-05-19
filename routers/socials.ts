@@ -5,8 +5,7 @@ import permit from '../middleware/permit';
 import { imageUpload } from '../multer';
 import { SocialData } from '../types/socials.types';
 import * as fs from 'fs';
-import { Types } from 'mongoose';
-import Warehouse from '../models/Warehouse';
+import mongoose, { Types } from 'mongoose';
 
 const socialsRouter = Router();
 
@@ -61,6 +60,9 @@ socialsRouter.post(
       await newSocial.save();
       return res.send({ message: 'Данные успешно добавлены', newSocial });
     } catch (e) {
+      if (e instanceof mongoose.Error.ValidationError || e instanceof mongoose.Error.CastError) {
+        return res.status(422).send(e);
+      }
       next(e);
     }
   },
@@ -73,12 +75,6 @@ socialsRouter.patch(
   imageUpload.single('image'),
   async (req, res, next) => {
     try {
-      let image: string | undefined | null = undefined;
-      if (req.body.image === 'delete') {
-        image = null;
-      } else if (req.file) {
-        image = req.file.filename;
-      }
       const filter = req.params.id;
       const isExists = await Social.findById(filter);
 
@@ -89,7 +85,7 @@ socialsRouter.patch(
       const updateData: SocialData = {
         name: req.body.name,
         link: req.body.link,
-        image: image,
+        image: req.body.image,
       };
 
       const updatedSocial = await Social.findOneAndUpdate({ _id: filter }, updateData, {
@@ -97,6 +93,9 @@ socialsRouter.patch(
       });
       return res.send({ message: 'Данные были успешно обновлены', socials: updatedSocial });
     } catch (e) {
+      if (e instanceof mongoose.Error.ValidationError || e instanceof mongoose.Error.CastError) {
+        return res.status(422).send(e);
+      }
       next(e);
     }
   },
