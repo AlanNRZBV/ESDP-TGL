@@ -24,7 +24,7 @@ socialsRouter.get('/', async (req, res, next) => {
   }
 });
 
-socialsRouter.get('/:id', async(req, res, next) => {
+socialsRouter.get('/:id', async (req, res, next) => {
   try {
     let _id: Types.ObjectId;
     try {
@@ -43,7 +43,7 @@ socialsRouter.get('/:id', async(req, res, next) => {
   } catch (e) {
     next(e);
   }
-})
+});
 
 socialsRouter.post(
   '/',

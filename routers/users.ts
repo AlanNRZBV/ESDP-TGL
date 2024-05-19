@@ -95,6 +95,44 @@ usersRouter.get('/', async (req, res, next) => {
   }
 });
 
+usersRouter.get('/clients', auth, permit('admin', 'manager', 'super'), async (req, res, next) => {
+  try {
+    const marketId = req.query.marketId;
+
+    if (marketId) {
+      const isInputValid = (marketIdString: string) => {
+        const regex = /^\d{5}$/;
+        return regex.test(marketIdString);
+      };
+
+      console.log(isInputValid(marketId as string));
+      if (!isInputValid(marketId as string)) {
+        return res.status(422).send({ message: 'Неверные данные', client: {} });
+      }
+      const client = await User.findOne({ marketId: marketId })
+        .populate('region')
+        .populate('pupID');
+      if (!client) {
+        return res.status(404).send({ message: 'Пользователь не найден', client: {} });
+      }
+      return res.send({ message: 'Пользователь успешно найден', client });
+    }
+
+    const clients = await User.find({ role: 'client' }).populate('region').populate('pupID');
+    const isEmpty = clients.length < 1;
+
+    if (isEmpty) {
+      return res.status(404).send({ message: 'Нет клиентов', clients: clients });
+    }
+    return res.send({ message: 'Клиенты успешно найдены', clients });
+  } catch (e) {
+    if (e instanceof mongoose.Error.CastError) {
+      return res.status(422).send(e);
+    }
+    next(e);
+  }
+});
+
 usersRouter.get('/:id', async (req, res) => {
   try {
     const userId = req.params.id;
