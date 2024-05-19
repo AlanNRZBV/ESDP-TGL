@@ -366,6 +366,25 @@ const run = async () => {
         isPaid: false,
         datetime: Date.now(),
       },
+      {
+        userId: users[1]._id,
+        userMarketId: users[1].marketId,
+        status: 'ОТКАЗ',
+        trackerNumber: 123456782,
+        pupId: pups[5]._id,
+        dimensions: {
+          height: 1020,
+          width: 1030,
+          length: 100,
+        },
+        weight: 13,
+        price: {
+          usd: 100,
+          som: 10000,
+        },
+        isPaid: false,
+        datetime: Date.now(),
+      },
     ]);
     await Price.create([
       {
