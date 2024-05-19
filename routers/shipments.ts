@@ -189,7 +189,7 @@ shipmentsRouter.delete('/:id', auth, async (req: RequestWithUser, res, next) => 
   }
 });
 
-shipmentsRouter.put('/:id', auth, permit('admin'), async (req: RequestWithUser, res, next) => {
+shipmentsRouter.put('/:id', auth, permit('admin', 'super', 'manager'), async (req: RequestWithUser, res, next) => {
   try {
     const id = req.params.id;
 
