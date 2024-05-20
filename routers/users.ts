@@ -153,7 +153,7 @@ usersRouter.get('/:id', async (req, res) => {
 
 usersRouter.post('/sessions', async (req, res, next) => {
   try {
-    const user = await User.findOne({ email: req.body.email }).populate('region');
+    const user = await User.findOne({ email: req.body.email }).populate('region pupID');
 
     if (!user) {
       return res.status(422).send({ message: 'Пользователь не найден!' });
