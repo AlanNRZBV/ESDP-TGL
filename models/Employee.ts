@@ -1,5 +1,6 @@
 import { model, Schema, Types } from 'mongoose';
 import Region from './Region';
+import { EmployeeFields, EmployeeModel } from '../types/models.types';
 
 const EmployeeSchema = new Schema({
   firstName: {
@@ -33,5 +34,5 @@ const EmployeeSchema = new Schema({
   },
 });
 
-const Employee = model('Employee', EmployeeSchema);
+const Employee = model<EmployeeFields, EmployeeModel>('Employee', EmployeeSchema);
 export default Employee;

@@ -10,6 +10,7 @@ import Region from './models/Region';
 import CompanyAddress from './models/CompanyAddress';
 import Social from './models/Social';
 import PriceList from './models/PriceList';
+import Employee from './models/Employee';
 
 const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
   try {
@@ -33,7 +34,7 @@ const run = async () => {
       'shipments',
       'pricelists',
       'socials',
-      'companyaddresses'
+      'companyaddresses',
     ];
 
     for (const collectionName of collections) {
@@ -129,21 +130,16 @@ const run = async () => {
       },
     ]);
 
-    const users = await User.create([
+    await Employee.create([
       {
-        email: 'super@gmail.com',
+        email: 'manage@gmail.com',
         password: 'qwerty',
-        firstName: 'Admin',
-        lastName: 'Super',
-        middleName: 'Superadminovich',
-        pupID: pups[0]._id,
+        firstName: 'Manager',
+        lastName: 'Managerov',
+        middleName: 'Managerovich',
         phoneNumber: '996505999774',
-        marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
         region: regions[0]._id,
         token: crypto.randomUUID(),
-        role: 'super',
-        address: 'Чуйкова 122',
-        settlement: 'Бишкек',
       },
       {
         email: 'admin@gmail.com',
@@ -151,30 +147,15 @@ const run = async () => {
         firstName: 'Admin',
         lastName: 'Adminov',
         middleName: 'Adminovich',
-        pupID: pups[0]._id,
         phoneNumber: '996505999774',
-        marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
         region: regions[1]._id,
         token: crypto.randomUUID(),
-        role: 'admin',
         address: 'Чуйкова 122',
-        settlement: 'Нарын',
+        settlement: 'Талас',
       },
-      {
-        email: 'manager@gmail.com',
-        password: 'qwerty',
-        firstName: 'Manager',
-        lastName: 'Managerov',
-        middleName: 'Managerovich',
-        pupID: pups[1]._id,
-        phoneNumber: '996505999774',
-        marketId: Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
-        region: regions[2]._id,
-        token: crypto.randomUUID(),
-        role: 'manager',
-        address: 'Чуйкова 122',
-        settlement: 'Нарын',
-      },
+    ]);
+
+    const users = await User.create([
       {
         email: 'user1@gmail.com',
         password: 'qwerty',
