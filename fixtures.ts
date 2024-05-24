@@ -33,7 +33,7 @@ const run = async () => {
       'shipments',
       'pricelists',
       'socials',
-      'companyaddresses'
+      'companyaddresses',
     ];
 
     for (const collectionName of collections) {

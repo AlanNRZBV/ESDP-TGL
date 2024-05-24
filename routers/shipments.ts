@@ -189,32 +189,37 @@ shipmentsRouter.delete('/:id', auth, async (req: RequestWithUser, res, next) => 
   }
 });
 
-shipmentsRouter.put('/:id', auth, permit('admin', 'super', 'manager'), async (req: RequestWithUser, res, next) => {
-  try {
-    const id = req.params.id;
-
+shipmentsRouter.put(
+  '/:id',
+  auth,
+  permit('admin', 'super', 'manager'),
+  async (req: RequestWithUser, res, next) => {
     try {
-      new mongoose.Types.ObjectId(id);
-    } catch {
-      return res.status(404).send({ error: 'Wrong ID!' });
+      const id = req.params.id;
+
+      try {
+        new mongoose.Types.ObjectId(id);
+      } catch {
+        return res.status(404).send({ error: 'Wrong ID!' });
+      }
+
+      const newShipment = await getShipmentData(req, res);
+
+      const shipment = await Shipment.findByIdAndUpdate(id, newShipment, { new: true });
+
+      if (!shipment) {
+        return res.status(404).send({ message: 'Груз не найден' });
+      }
+
+      return res.send({ message: 'Данные успешно обновлены', shipment });
+    } catch (e) {
+      if (e instanceof mongoose.Error.ValidationError) {
+        return res.status(422).send(e);
+      }
+      return next(e);
     }
-
-    const newShipment = await getShipmentData(req, res);
-
-    const shipment = await Shipment.findByIdAndUpdate(id, newShipment, { new: true });
-
-    if (!shipment) {
-      return res.status(404).send({ message: 'Груз не найден' });
-    }
-
-    return res.send({ message: 'Данные успешно обновлены', shipment });
-  } catch (e) {
-    if (e instanceof mongoose.Error.ValidationError) {
-      return res.status(422).send(e);
-    }
-    return next(e);
-  }
-});
+  },
+);
 
 shipmentsRouter.patch('/:id/toggleDelivery', auth, async (req: RequestWithUser, res, next) => {
   try {

@@ -237,9 +237,9 @@ usersRouter.delete(
       }
 
       if (user.role === 'client' && role === 'admin') {
-        await User.findByIdAndDelete(itemId);
+        await User.findOneAndDelete({ _id: itemId });
       } else if (role === 'super') {
-        await User.findByIdAndDelete(itemId);
+        await User.findOneAndDelete({ _id: itemId });
       } else {
         return res.status(404).send({ message: 'У вас нет полномочий!' });
       }
