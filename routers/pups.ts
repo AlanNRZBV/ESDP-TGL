@@ -38,9 +38,9 @@ pupsRouter.get('/', async (req, res, next) => {
     let pups;
 
     if (regionId) {
-      pups = await PUP.find({ region: regionId }).populate('region', 'name lang').sort({ _id: -1 });
+      pups = await PUP.find({ region: regionId }).populate('region', 'name lang').sort({ _id: 1 });
     } else {
-      pups = await PUP.find().populate('region', 'name lang').sort({ _id: -1 });
+      pups = await PUP.find().populate('region', 'name lang').sort({ _id: 1 });
     }
 
     return res.send({ message: 'Список ПВЗ', pups });
