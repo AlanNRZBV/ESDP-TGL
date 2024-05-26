@@ -111,14 +111,16 @@ usersRouter.get('/clients', auth, permit('admin', 'manager', 'super'), async (re
       }
       const client = await User.findOne({ marketId: marketId })
         .populate('region')
-        .populate('pupID');
+        .populate({ path: 'pupID', populate: { path: 'region' } });
       if (!client) {
         return res.status(404).send({ message: 'Пользователь не найден', client: {} });
       }
       return res.send({ message: 'Пользователь успешно найден', client });
     }
 
-    const clients = await User.find({ role: 'client' }).populate('region').populate('pupID');
+    const clients = await User.find({ role: 'client' })
+      .populate('region')
+      .populate({ path: 'pupID', populate: { path: 'region' } });
     const isEmpty = clients.length < 1;
 
     if (isEmpty) {
