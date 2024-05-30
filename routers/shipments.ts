@@ -3,7 +3,12 @@ import mongoose, { FilterQuery } from 'mongoose';
 import auth, { RequestWithUser } from '../middleware/auth';
 import permit from '../middleware/permit';
 import Shipment from '../models/Shipment';
-import { DeliveryData, ShipmentData, ShipmentKeys } from '../types/shipment.types';
+import {
+  DeliveryData,
+  ShipmentData,
+  ShipmentKeys,
+  ShipmentStatusData,
+} from '../types/shipment.types';
 import Price from '../models/Price';
 import PUP from '../models/Pup';
 import dayjs from 'dayjs';
@@ -217,6 +222,37 @@ shipmentsRouter.put(
         return res.status(422).send(e);
       }
       return next(e);
+    }
+  },
+);
+
+shipmentsRouter.patch(
+  '/changeStatus',
+  auth,
+  permit('admin', 'super', 'manager'),
+  async (req, res, next) => {
+    try {
+      const updateData: ShipmentStatusData[] = req.body;
+
+      const single = updateData.map((item) => ({
+        updateOne: {
+          filter: { _id: item._id },
+          update: { status: item.status, isPaid: item.isPaid },
+        },
+      }));
+
+      const updatedShipments = await Shipment.bulkWrite(single);
+
+      if (!updatedShipments) {
+        return res.status(404).send({ message: 'Что-то пошло не так' });
+      }
+
+      return res.send({ message: 'Обновлено', shipment: updatedShipments });
+    } catch (e) {
+      if (e instanceof mongoose.Error.ValidationError || mongoose.Error.CastError) {
+        return res.status(422).send(e);
+      }
+      next(e);
     }
   },
 );

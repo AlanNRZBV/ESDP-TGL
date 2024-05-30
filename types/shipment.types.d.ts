@@ -32,3 +32,9 @@ export interface DeliveryData {
   phoneNumber: string;
   date: string;
 }
+
+export interface ShipmentStatusData {
+  _id: string;
+  status: string;
+  isPaid: boolean;
+}
