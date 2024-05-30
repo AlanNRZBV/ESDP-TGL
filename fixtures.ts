@@ -10,6 +10,7 @@ import Region from './models/Region';
 import CompanyAddress from './models/CompanyAddress';
 import Social from './models/Social';
 import PriceList from './models/PriceList';
+import BannedCategory from './models/BannedCategory';
 
 const dropCollection = async (db: mongoose.Connection, collectionName: string) => {
   try {
@@ -34,6 +35,7 @@ const run = async () => {
       'pricelists',
       'socials',
       'companyaddresses',
+      'bannedcategories',
     ];
 
     for (const collectionName of collections) {
@@ -565,6 +567,24 @@ const run = async () => {
             value: 4.2,
           },
         ],
+      },
+    ]);
+
+    await BannedCategory.create([
+      {
+        name: 'Товар 1',
+      },
+      {
+        name: 'Товар 2',
+      },
+      {
+        name: 'Товар 3',
+      },
+      {
+        name: 'Товар 4',
+      },
+      {
+        name: 'Товар 5',
       },
     ]);
 
