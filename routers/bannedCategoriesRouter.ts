@@ -50,7 +50,7 @@ bannedCategoriesRouter.patch('/:id', auth, permit('admin', 'super'), async (req,
 
     const banned = await BannedCategory.findById(id);
 
-    if (banned) {
+    if (!banned) {
       return res.status(404).send({ message: 'Категория или товар не найден' });
     }
 
@@ -77,7 +77,7 @@ bannedCategoriesRouter.delete('/:id', auth, permit('admin', 'super'), async (req
 
     const banned = await BannedCategory.findById(id);
 
-    if (banned) {
+    if (!banned) {
       return res.status(404).send({ message: 'Категория или товар не найден' });
     }
 
