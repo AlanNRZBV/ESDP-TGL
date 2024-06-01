@@ -69,6 +69,21 @@ usersRouter.post('/staff', auth, permit('super'), async (req: RequestWithUser, r
   }
 });
 
+usersRouter.get('/staff/:id', async (req, res, next) => {
+  try {
+    const staffParamsEmail = req.params.id;
+    const user = await User.findOne({ email: staffParamsEmail }).select('-token -address');
+
+    if (!user) {
+      return res.status(404).send({ message: 'Сотрудник не найден!' });
+    }
+
+    return res.send({ message: 'Сотрудник найден!', user });
+  } catch (e) {
+    return next(e);
+  }
+});
+
 usersRouter.get('/', async (req, res, next) => {
   try {
     const { region, settlement, role } = req.query;
@@ -139,6 +154,7 @@ usersRouter.get('/:id', async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await User.findById(userId)
+      .select('-token')
       .populate({
         path: 'region',
         select: 'name',
