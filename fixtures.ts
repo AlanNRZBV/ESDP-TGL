@@ -626,7 +626,7 @@ const run = async () => {
         pupId: pups[0],
         userMarketId: users[3].marketId,
         status: 'КНР_ПРИБЫЛО',
-        trackerNumber: 123456789,
+        trackerNumber: 111111111,
         dimensions: {
           height: 1000,
           width: 1000,
@@ -638,7 +638,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
-        datetime: Date.now(),
+        datetime: "2023-06-02T10:23:02Z",
       },
       {
         userId: users[3]._id,
