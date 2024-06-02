@@ -114,7 +114,7 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
     let filter: FilterQuery<ShipmentData> = {};
 
     if (regionId) {
-      const pups = await PUP.find({ _id: regionId });
+      const pups = await PUP.find({ region: regionId });
       const idList = pups.map((pup) => pup._id);
 
       filter = { pupId: { $in: idList } };
@@ -151,6 +151,29 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
       }
       const shipments = await Shipment.find({ pupId }).limit(30).populate('userId', 'firstName');
       return res.send({ message: 'Список грузов', shipments });
+    }
+
+    if (datetime) {
+      if (datetime === 'month') {
+        const shipments = await Shipment.find({
+          datetime: { $gte: startOfLastMonth, $lte: endOfLastMonth },
+        })
+          .sort({ datetime: -1 })
+          .limit(30)
+          .populate('userId', 'firstName');
+        return res.send({ message: 'Список грузов за последний месяц', shipments });
+      }
+
+      if (datetime === 'year') {
+        const shipments = await Shipment.find({
+          datetime: { $gte: startOfYear, $lte: endOfYear },
+        })
+          .sort({ datetime: -1 })
+          .limit(30)
+          .populate('userId', 'firstName');
+
+        return res.send({ message: 'Список грузов за последний год', shipments });
+      }
     }
 
     if (user?.role === 'super' || user?.role === 'admin' || user?.role === 'manager') {
