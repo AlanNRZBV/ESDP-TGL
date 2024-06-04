@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.ts",
+    "start:test": "NODE_ENV=test ts-node server.ts",
     "seed": "ts-node fixtures.ts",
+    "seed:test": "NODE_ENV=test ts-node fixtures.ts",
     "lint": "eslint */*.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
@@ -20,7 +22,8 @@
     "express": "^4.19.2",
     "google-libphonenumber": "^3.2.34",
     "mongoose": "^8.3.0",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

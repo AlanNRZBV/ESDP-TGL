@@ -14,7 +14,6 @@ import priceListsRouter from './routers/priceLists';
 import bannedCategoriesRouter from './routers/bannedCategoriesRouter';
 
 const app = express();
-const port = 8000;
 
 app.use(express.static('public'));
 app.use(express.json());
@@ -33,8 +32,8 @@ app.use('/banned-categories', bannedCategoriesRouter);
 const run = async () => {
   await mongoose.connect(config.mongoose.db);
 
-  app.listen(port, () => {
-    console.log(`server started on ${port} port`);
+  app.listen(config.port, () => {
+    console.log(`server started on ${config.port} port`);
   });
 
   process.on('exit', () => {
