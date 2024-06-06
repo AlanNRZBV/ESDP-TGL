@@ -45,7 +45,7 @@ const run = async () => {
     await Warehouse.create({
       name: '特米TECH',
       address: '广东省佛山市南海区里水镇得胜村横五路5号103仓-AFZUV—',
-      phoneNumber: '17324524246',
+      phoneNumber: '8617324524246',
     });
 
     const regions = await Region.create([
@@ -638,7 +638,7 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
-        datetime: "2023-06-02T10:23:02Z",
+        datetime: '2023-06-02T10:23:02Z',
       },
       {
         userId: users[3]._id,
