@@ -10,7 +10,7 @@ const warehousesRouter = Router();
 warehousesRouter.get('/', auth, async (req, res, next) => {
   try {
     const warehouses = await Warehouse.find();
-    if (warehouses.length < 1) {
+    if (warehouses.length < 0) {
       return res.status(404).send({ message: 'Ни одного склада не было найдено.' });
     }
     return res.send({ message: 'Список складов успешно загружен', warehouses: warehouses });
@@ -78,6 +78,28 @@ warehousesRouter.patch('/:id', auth, permit('super'), async (req: RequestWithUse
       return res.status(422).send(e);
     }
     next(e);
+  }
+});
+
+warehousesRouter.delete('/:id', auth, permit('super'), async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    try {
+      new mongoose.Types.ObjectId(id);
+    } catch {
+      return res.status(404).send({ error: 'Wrong ID!' });
+    }
+
+    const result = await Warehouse.findByIdAndDelete(id);
+
+    if (!result) {
+      return res.status(404).send({ message: 'Склад не найден' });
+    }
+
+    return res.send({ message: 'Склад успешно удален' });
+  } catch (e) {
+    return next(e);
   }
 });
 export default warehousesRouter;
