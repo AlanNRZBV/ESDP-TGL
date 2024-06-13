@@ -94,7 +94,7 @@ warehousesRouter.delete('/:id', auth, permit('super'), async (req, res, next) =>
     const result = await Warehouse.findByIdAndDelete(id);
 
     if (!result) {
-      return res.status(404).send({ message: 'Склад не найден' });
+      return res.status(404).send({ message: 'Склад не найден!' });
     }
 
     return res.send({ message: 'Склад успешно удален' });
