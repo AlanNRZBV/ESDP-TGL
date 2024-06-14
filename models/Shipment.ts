@@ -46,23 +46,11 @@ const ShipmentSchema = new Schema<ShipmentData>({
     default: 'КНР_ПРИБЫЛО',
   },
   dimensions: {
-    height: {
-      type: Number,
-      required: true,
-    },
-    width: {
-      type: Number,
-      required: true,
-    },
-    length: {
-      type: Number,
-      required: true,
-    },
+    height: Number,
+    width: Number,
+    length: Number,
   },
-  weight: {
-    type: Number,
-    required: true,
-  },
+  weight: Number,
   price: {
     usd: {
       type: Number,
