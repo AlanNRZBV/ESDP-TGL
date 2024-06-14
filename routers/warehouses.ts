@@ -11,7 +11,7 @@ warehousesRouter.get('/', auth, async (req, res, next) => {
   try {
     const warehouses = await Warehouse.find();
     if (warehouses.length < 0) {
-      return res.status(404).send({ message: 'Ни одного склада не было найдено.' });
+      return res.status(404).send({ message: 'Ни одного склада не было найдено!' });
     }
     return res.send({ message: 'Список складов успешно загружен', warehouses: warehouses });
   } catch (e) {
