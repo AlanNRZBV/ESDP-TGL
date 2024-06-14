@@ -206,7 +206,7 @@ const run = async () => {
     const users = await User.create([
       {
         email: 'super@gmail.com',
-        password: 'qwerty',
+        password: 'jSPJJB2X',
         firstName: 'Admin',
         lastName: 'Super',
         middleName: 'Superadminovich',
