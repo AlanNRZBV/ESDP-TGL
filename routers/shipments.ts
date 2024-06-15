@@ -5,6 +5,7 @@ import permit from '../middleware/permit';
 import Shipment from '../models/Shipment';
 import {
   DeliveryData,
+  ShipmentBody,
   ShipmentData,
   ShipmentKeys,
   ShipmentStatusData,
@@ -81,6 +82,29 @@ shipmentsRouter.post(
   permit('admin', 'super'),
   async (req: RequestWithUser, res, next) => {
     try {
+      const shipmentsData: ShipmentBody = req.body;
+      const isDimensionsDefault =
+        shipmentsData.dimensions.height === '0' ||
+        shipmentsData.dimensions.width === '0' ||
+        shipmentsData.dimensions.length === '0';
+      const isDefault = shipmentsData.userMarketId === '' && isDimensionsDefault;
+
+      if (isDefault) {
+        const defaultShipment = {
+          userId: req.user?._id,
+          dimensions: shipmentsData.dimensions,
+          weight: shipmentsData.weight,
+          price: { usd: 0, som: 0 },
+          trackerNumber: req.body.trackerNumber,
+          isAnonymous: true,
+          isVisible: false,
+        };
+
+        const shipment = new Shipment(defaultShipment);
+        await shipment.save();
+        return res.send({ message: 'Cоздан анонимный груз с настройками по умолчанию', shipment });
+      }
+
       const newShipment = await getShipmentData(req, res);
       const shipment = new Shipment(newShipment);
       await shipment.save();
@@ -312,6 +336,13 @@ shipmentsRouter.patch('/:id/toggleDelivery', auth, async (req: RequestWithUser, 
       return res.send({ message: 'Доставка успешно заказана', shipment: shipmentToUpdate });
     }
     return res.status(404).send({ error: 'Неверные данные' });
+  } catch (e) {
+    next(e);
+  }
+});
+
+shipmentsRouter.get('/', auth, async (req: RequestWithUser, res, next) => {
+  try {
   } catch (e) {
     next(e);
   }
