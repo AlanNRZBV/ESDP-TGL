@@ -13,6 +13,7 @@ import {
 import Price from '../models/Price';
 import PUP from '../models/Pup';
 import dayjs from 'dayjs';
+import shipment from '../models/Shipment';
 
 const shipmentsRouter = express.Router();
 
@@ -96,8 +97,7 @@ shipmentsRouter.post(
           weight: shipmentsData.weight,
           price: { usd: 0, som: 0 },
           trackerNumber: req.body.trackerNumber,
-          isAnonymous: true,
-          isVisible: false,
+          isPriceVisible: false,
         };
 
         const shipment = new Shipment(defaultShipment);
@@ -146,8 +146,22 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
 
     if (orderByTrackingNumber) {
       const shipment = await Shipment.findOne({ trackerNumber: orderByTrackingNumber });
+      const isAnonymous = shipment?.userMarketId === 0;
 
-      return res.send({ message: 'Поиск по трекеру', shipment });
+      if (shipment && !isAnonymous) {
+        return res.send({ message: 'Груз успешно найден', shipment });
+      }
+
+      const update = await Shipment.findOneAndUpdate(
+        { trackerNumber: orderByTrackingNumber },
+        { userMarketId: user?.marketId },
+        { new: true },
+      );
+      if (update) {
+        return res.send({ message: 'Анонимному грузу присвоен идентификатор', shipment: update });
+      }
+
+      return res.send({ message: 'Не найдено грузов', shipment });
     }
 
     if (pupId) {

@@ -20,6 +20,7 @@ const ShipmentSchema = new Schema<ShipmentData>({
   },
   userMarketId: {
     type: Number,
+    default: 0,
   },
   pupId: {
     type: Schema.Types.ObjectId,
@@ -102,11 +103,7 @@ const ShipmentSchema = new Schema<ShipmentData>({
     required: true,
     default: () => new Date(),
   },
-  isAnonymous: {
-    type: Boolean,
-    default: false,
-  },
-  isVisible: {
+  isPriceVisible: {
     type: Boolean,
     default: true,
   },
