@@ -21,8 +21,7 @@ export interface ShipmentData {
   };
   isPaid: boolean;
   datetime: Date;
-  isAnonymous: boolean;
-  isVisible: boolean;
+  isPriceVisible: boolean;
 }
 
 interface ShipmentKeys {
