@@ -643,6 +643,8 @@ const run = async () => {
       },
     ]);
 
+    const defaultUser1 = await User.findOne({ email: 'user1@gmail.com' });
+
     await Shipment.create([
       {
         userId: users[3]._id,
@@ -794,6 +796,23 @@ const run = async () => {
           som: 10000,
         },
         isPaid: false,
+        datetime: Date.now(),
+      },
+      {
+        userId: defaultUser1?._id,
+        trackerNumber: 333,
+        dimensions: {
+          height: 0,
+          width: 0,
+          length: 0,
+        },
+        weight: 1,
+        price: {
+          usd: 0,
+          som: 0,
+        },
+        isPaid: false,
+        isPriceVisible: false,
         datetime: Date.now(),
       },
     ]);
