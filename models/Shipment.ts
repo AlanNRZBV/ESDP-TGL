@@ -20,7 +20,7 @@ const ShipmentSchema = new Schema<ShipmentData>({
   },
   userMarketId: {
     type: Number,
-    required: true,
+    default: 0,
   },
   pupId: {
     type: Schema.Types.ObjectId,
@@ -41,7 +41,6 @@ const ShipmentSchema = new Schema<ShipmentData>({
   },
   status: {
     type: String,
-    required: true,
     enum: ['КР_ОТПРАВЛЕНО', 'КР_ПРИБЫЛО', 'КНР_ОТПРАВЛЕНО', 'КНР_ПРИБЫЛО', 'ЗАВЕРШЕН', 'ОТКАЗ'],
     default: 'КНР_ПРИБЫЛО',
   },
@@ -97,13 +96,16 @@ const ShipmentSchema = new Schema<ShipmentData>({
   },
   isPaid: {
     type: Boolean,
-    required: true,
     default: false,
   },
   datetime: {
     type: Date,
     required: true,
     default: () => new Date(),
+  },
+  isPriceVisible: {
+    type: Boolean,
+    default: true,
   },
 });
 

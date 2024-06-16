@@ -5,6 +5,7 @@ import permit from '../middleware/permit';
 import Shipment from '../models/Shipment';
 import {
   DeliveryData,
+  ShipmentBody,
   ShipmentData,
   ShipmentKeys,
   ShipmentStatusData,
@@ -12,6 +13,7 @@ import {
 import Price from '../models/Price';
 import PUP from '../models/Pup';
 import dayjs from 'dayjs';
+import shipment from '../models/Shipment';
 
 const shipmentsRouter = express.Router();
 
@@ -81,6 +83,28 @@ shipmentsRouter.post(
   permit('admin', 'super'),
   async (req: RequestWithUser, res, next) => {
     try {
+      const shipmentsData: ShipmentBody = req.body;
+      const isDimensionsDefault =
+        shipmentsData.dimensions.height === '0' ||
+        shipmentsData.dimensions.width === '0' ||
+        shipmentsData.dimensions.length === '0';
+      const isDefault = shipmentsData.userMarketId === '' && isDimensionsDefault;
+
+      if (isDefault) {
+        const defaultShipment = {
+          userId: req.user?._id,
+          dimensions: shipmentsData.dimensions,
+          weight: shipmentsData.weight,
+          price: { usd: 0, som: 0 },
+          trackerNumber: req.body.trackerNumber,
+          isPriceVisible: false,
+        };
+
+        const shipment = new Shipment(defaultShipment);
+        await shipment.save();
+        return res.send({ message: 'Cоздан анонимный груз с настройками по умолчанию', shipment });
+      }
+
       const newShipment = await getShipmentData(req, res);
       const shipment = new Shipment(newShipment);
       await shipment.save();
@@ -122,8 +146,22 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
 
     if (orderByTrackingNumber) {
       const shipment = await Shipment.findOne({ trackerNumber: orderByTrackingNumber });
+      const isAnonymous = shipment?.userMarketId === 0;
 
-      return res.send({ message: 'Поиск по трекеру', shipment });
+      if (shipment && !isAnonymous) {
+        return res.send({ message: 'Груз успешно найден', shipment });
+      }
+
+      const update = await Shipment.findOneAndUpdate(
+        { trackerNumber: orderByTrackingNumber },
+        { userMarketId: user?.marketId },
+        { new: true },
+      );
+      if (update) {
+        return res.send({ message: 'Анонимному грузу присвоен идентификатор', shipment: update });
+      }
+
+      return res.send({ message: 'Не найдено грузов', shipment });
     }
 
     if (pupId) {
@@ -312,6 +350,13 @@ shipmentsRouter.patch('/:id/toggleDelivery', auth, async (req: RequestWithUser, 
       return res.send({ message: 'Доставка успешно заказана', shipment: shipmentToUpdate });
     }
     return res.status(404).send({ error: 'Неверные данные' });
+  } catch (e) {
+    next(e);
+  }
+});
+
+shipmentsRouter.get('/', auth, async (req: RequestWithUser, res, next) => {
+  try {
   } catch (e) {
     next(e);
   }

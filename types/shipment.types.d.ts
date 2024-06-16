@@ -21,6 +21,7 @@ export interface ShipmentData {
   };
   isPaid: boolean;
   datetime: Date;
+  isPriceVisible: boolean;
 }
 
 interface ShipmentKeys {
@@ -37,4 +38,13 @@ export interface ShipmentStatusData {
   _id: string;
   status: string;
   isPaid: boolean;
+}
+
+export interface ShipmentBody {
+  userMarketId: string;
+  trackerNumber: string;
+  weight: string;
+  pupId: string;
+  status: string;
+  dimensions: { height: string; width: string; length: string };
 }
