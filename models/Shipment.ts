@@ -47,15 +47,12 @@ const ShipmentSchema = new Schema<ShipmentData>({
   dimensions: {
     height: {
       type: Number,
-      required: true,
     },
     width: {
       type: Number,
-      required: true,
     },
     length: {
       type: Number,
-      required: true,
     },
   },
   weight: {
