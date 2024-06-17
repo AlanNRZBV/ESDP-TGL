@@ -13,7 +13,6 @@ import {
 import Price from '../models/Price';
 import PUP from '../models/Pup';
 import dayjs from 'dayjs';
-import shipment from '../models/Shipment';
 
 const shipmentsRouter = express.Router();
 
@@ -85,10 +84,12 @@ shipmentsRouter.post(
     try {
       const shipmentsData: ShipmentBody = req.body;
       const isDimensionsDefault =
-        shipmentsData.dimensions.height === '0' ||
-        shipmentsData.dimensions.width === '0' ||
-        shipmentsData.dimensions.length === '0';
+        shipmentsData.dimensions.height === '' ||
+        shipmentsData.dimensions.width === '' ||
+        shipmentsData.dimensions.length === '';
       const isDefault = shipmentsData.userMarketId === '' && isDimensionsDefault;
+
+      console.log('OT KLIETNA ', shipmentsData);
 
       if (isDefault) {
         const defaultShipment = {
