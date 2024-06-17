@@ -559,7 +559,7 @@ const run = async () => {
       },
       {
         email: 'user23@gmail.com',
-        password: 'qwerty',
+        password: 'jSPJJB2X',
         firstName: 'User23',
         lastName: 'Userov',
         middleName: 'Userovich',

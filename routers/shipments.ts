@@ -219,7 +219,8 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
       const shipments = await Shipment.find(filter)
         .populate('userId', 'firstName lastName')
         .populate('pupId', '_id name address settlement region phoneNumber')
-        .limit(30);
+        .limit(30)
+        .sort({ _id: 1 });
       return res.send({ message: 'Список грузов', shipments });
     }
   } catch (e) {
@@ -351,13 +352,6 @@ shipmentsRouter.patch('/:id/toggleDelivery', auth, async (req: RequestWithUser, 
       return res.send({ message: 'Доставка успешно заказана', shipment: shipmentToUpdate });
     }
     return res.status(404).send({ error: 'Неверные данные' });
-  } catch (e) {
-    next(e);
-  }
-});
-
-shipmentsRouter.get('/', auth, async (req: RequestWithUser, res, next) => {
-  try {
   } catch (e) {
     next(e);
   }
