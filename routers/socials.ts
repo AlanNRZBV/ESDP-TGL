@@ -11,7 +11,7 @@ const socialsRouter = Router();
 
 socialsRouter.get('/', async (req, res, next) => {
   try {
-    const socials = await Social.find();
+    const socials = await Social.find().sort({ _id: -1 });
     const isEmpty = socials.length < 1;
     if (isEmpty) {
       return res.status(404).send({ message: 'В базе данных нет записей', socials: [] });

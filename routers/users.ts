@@ -120,7 +120,6 @@ usersRouter.get('/clients', auth, permit('admin', 'manager', 'super'), async (re
         return regex.test(marketIdString);
       };
 
-      console.log(isInputValid(marketId as string));
       if (!isInputValid(marketId as string)) {
         return res.status(422).send({ message: 'Неверные данные', client: {} });
       }
@@ -135,7 +134,8 @@ usersRouter.get('/clients', auth, permit('admin', 'manager', 'super'), async (re
 
     const clients = await User.find({ role: 'client' })
       .populate('region')
-      .populate({ path: 'pupID', populate: { path: 'region' } });
+      .populate({ path: 'pupID', populate: { path: 'region' } })
+      .sort({ _id: 1 });
     const isEmpty = clients.length < 1;
 
     if (isEmpty) {
