@@ -89,8 +89,6 @@ shipmentsRouter.post(
         shipmentsData.dimensions.length === '';
       const isDefault = shipmentsData.userMarketId === '' && isDimensionsDefault;
 
-      console.log('OT KLIETNA ', shipmentsData);
-
       if (isDefault) {
         const defaultShipment = {
           userId: req.user?._id,
@@ -148,21 +146,25 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
     if (orderByTrackingNumber) {
       const shipment = await Shipment.findOne({ trackerNumber: orderByTrackingNumber });
       const isAnonymous = shipment?.userMarketId === 0;
+      const isOwner = shipment?.userId === user?.id;
 
-      if (shipment && !isAnonymous) {
+      if (shipment && !isAnonymous && isOwner) {
         return res.send({ message: 'Груз успешно найден', shipment });
       }
 
-      const update = await Shipment.findOneAndUpdate(
-        { trackerNumber: orderByTrackingNumber },
-        { userMarketId: user?.marketId },
-        { new: true },
-      );
-      if (update) {
+      console.log('anon check ', isAnonymous);
+      console.log('owner check ', isOwner);
+
+      if (isAnonymous) {
+        const update = await Shipment.findOneAndUpdate(
+          { trackerNumber: orderByTrackingNumber },
+          { userMarketId: user?.marketId },
+          { new: true },
+        );
         return res.send({ message: 'Анонимному грузу присвоен идентификатор', shipment: update });
       }
 
-      return res.send({ message: 'Не найдено грузов', shipment });
+      return res.send({ message: 'Не найдено грузов', shipment: null });
     }
 
     if (pupId) {
