@@ -188,7 +188,11 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
   }
 });
 
-shipmentsRouter.delete('/:id', auth, async (req: RequestWithUser, res, next) => {
+shipmentsRouter.delete(
+  '/:id',
+  auth,
+  permit('admin', 'super', 'manager'),
+  async (req: RequestWithUser, res, next) => {
   try {
     const id = req.params.id;
     const user = req.user;
@@ -197,12 +201,6 @@ shipmentsRouter.delete('/:id', auth, async (req: RequestWithUser, res, next) => 
       new mongoose.Types.ObjectId(id);
     } catch {
       return res.status(404).send({ error: 'Wrong ID!' });
-    }
-
-    const shipment = await Shipment.findById(id);
-
-    if (shipment?.userMarketId !== user?.marketId) {
-      return res.status(401).send({ message: 'Вы не имеете права удалять чужие грузы!' });
     }
 
     const result = await Shipment.findByIdAndDelete(id);
