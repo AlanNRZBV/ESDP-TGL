@@ -227,34 +227,32 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
   }
 });
 
-shipmentsRouter.delete('/:id', auth, async (req: RequestWithUser, res, next) => {
-  try {
-    const id = req.params.id;
-    const user = req.user;
-
+shipmentsRouter.delete(
+  '/:id',
+  auth,
+  permit('admin', 'super', 'manager'),
+  async (req: RequestWithUser, res, next) => {
     try {
-      new mongoose.Types.ObjectId(id);
-    } catch {
-      return res.status(404).send({ error: 'Wrong ID!' });
+      const id = req.params.id;
+
+      try {
+        new mongoose.Types.ObjectId(id);
+      } catch {
+        return res.status(404).send({ error: 'Wrong ID!' });
+      }
+
+      const result = await Shipment.findByIdAndDelete(id);
+
+      if (!result) {
+        return res.status(404).send({ message: 'Груз не найден' });
+      }
+
+      return res.send({ message: 'Груз успешно удален', result });
+    } catch (e) {
+      return next(e);
     }
-
-    const shipment = await Shipment.findById(id);
-
-    if (shipment?.userMarketId !== user?.marketId) {
-      return res.status(401).send({ message: 'Вы не имеете права удалять чужие грузы!' });
-    }
-
-    const result = await Shipment.findByIdAndDelete(id);
-
-    if (!result) {
-      return res.status(404).send({ message: 'Груз не найден' });
-    }
-
-    return res.send({ message: 'Груз успешно удален', result });
-  } catch (e) {
-    return next(e);
-  }
-});
+  },
+);
 
 shipmentsRouter.put(
   '/:id',
@@ -274,6 +272,7 @@ shipmentsRouter.put(
 
       const shipment = await Shipment.findByIdAndUpdate(id, newShipment, { new: true });
 
+      console.log('newShipment', newShipment);
       if (!shipment) {
         return res.status(404).send({ message: 'Груз не найден' });
       }
