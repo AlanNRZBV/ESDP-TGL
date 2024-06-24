@@ -125,6 +125,7 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
     const datetime = req.query.datetime as string;
     const orderByTrackingNumber = req.query.orderByTrackingNumber as string;
     const marketId = req.query.marketId as string;
+    const isAdmin = user?.role === 'admin' || user?.role === 'super' || user?.role === 'manager';
 
     if (marketId) {
       const shipments = await Shipment.find({ userMarketId: marketId }).populate(
@@ -149,6 +150,10 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
       const isOwner = shipment?.userId.toString() === user?.id;
 
       if (shipment && !isAnonymous && isOwner) {
+        return res.send({ message: 'Груз успешно найден', shipment });
+      }
+
+      if (isAdmin) {
         return res.send({ message: 'Груз успешно найден', shipment });
       }
 
