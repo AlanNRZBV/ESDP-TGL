@@ -13,10 +13,6 @@ const bannedCategoriesRouter = Router();
 bannedCategoriesRouter.get('/', async (req, res, next) => {
   try {
     const response = await BannedCategory.find().sort({ name: 1 });
-    const isEmpty = response.length < 1;
-    if (isEmpty) {
-      return res.status(404).send({ message: 'Запрещенных товаров не найдено' });
-    }
     return res.send({
       message: 'Запрещенный товары и категории успешно найдены',
       banned: response,
