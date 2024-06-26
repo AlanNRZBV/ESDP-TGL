@@ -11,9 +11,19 @@ companyAddressesRouter.get('/', async (req, res, next) => {
   try {
     const address = await CompanyAddress.find();
     if (address.length < 1) {
-      return res.status(404).send({ error: 'Список адресов пуст или не найден', addresses: null });
+      return res.send({ message: 'Список адресов пуст или не найден', addresses: [] });
     }
     return res.send({ message: 'Адрес успешно загружен', addresses: address });
+  } catch (e) {
+    next(e);
+  }
+});
+
+companyAddressesRouter.get('/:id', async (req, res, next) => {
+  try {
+    const params = req.params.id;
+    const address = await CompanyAddress.findById(params);
+    return res.send({ message: 'Поиск по 1 адресу:', address: address });
   } catch (e) {
     next(e);
   }

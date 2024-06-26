@@ -5,18 +5,40 @@ import permit from '../middleware/permit';
 import { imageUpload } from '../multer';
 import { SocialData } from '../types/socials.types';
 import * as fs from 'fs';
+import mongoose, { Types } from 'mongoose';
 
 const socialsRouter = Router();
 
 socialsRouter.get('/', async (req, res, next) => {
   try {
-    const socials = await Social.find();
+    const socials = await Social.find().sort({ _id: -1 });
     const isEmpty = socials.length < 1;
     if (isEmpty) {
       return res.status(404).send({ message: 'В базе данных нет записей', socials: [] });
     }
 
     return res.send({ message: 'Данные социальных сетей успешно загружены', socials });
+  } catch (e) {
+    next(e);
+  }
+});
+
+socialsRouter.get('/:id', async (req, res, next) => {
+  try {
+    let _id: Types.ObjectId;
+    try {
+      _id = new Types.ObjectId(req.params.id);
+    } catch {
+      return res.status(404).send({ error: 'Неправильный ID' });
+    }
+
+    const social = await Social.findById(_id);
+
+    if (!social) {
+      return res.status(404).send({ error: 'Ни одной социальной сети не было найдено' });
+    }
+
+    res.send(social);
   } catch (e) {
     next(e);
   }
@@ -30,6 +52,7 @@ socialsRouter.post(
   async (req, res, next) => {
     try {
       const socialData: SocialData = {
+        name: req.body.name,
         link: req.body.link,
         image: req.file ? req.file.filename : null,
       };
@@ -37,6 +60,9 @@ socialsRouter.post(
       await newSocial.save();
       return res.send({ message: 'Данные успешно добавлены', newSocial });
     } catch (e) {
+      if (e instanceof mongoose.Error.ValidationError || e instanceof mongoose.Error.CastError) {
+        return res.status(422).send(e);
+      }
       next(e);
     }
   },
@@ -57,8 +83,9 @@ socialsRouter.patch(
       }
 
       const updateData: SocialData = {
+        name: req.body.name,
         link: req.body.link,
-        image: req.file ? req.file.filename : null,
+        image: req.body.image,
       };
 
       const updatedSocial = await Social.findOneAndUpdate({ _id: filter }, updateData, {
@@ -66,6 +93,9 @@ socialsRouter.patch(
       });
       return res.send({ message: 'Данные были успешно обновлены', socials: updatedSocial });
     } catch (e) {
+      if (e instanceof mongoose.Error.ValidationError || e instanceof mongoose.Error.CastError) {
+        return res.status(422).send(e);
+      }
       next(e);
     }
   },

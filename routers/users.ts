@@ -23,12 +23,15 @@ usersRouter.post('/', async (req, res, next) => {
       settlement: req.body.settlement,
     };
 
-    const user = new User(userData);
+    const userReg = new User(userData);
 
-    user.generateMarketID();
-    user.generateToken();
-    await user.save();
+    userReg.generateMarketID();
+    userReg.generateToken();
+    await userReg.save();
 
+    const user = await User.findById(userReg._id)
+      .populate({ path: 'region', select: 'name' })
+      .populate({ path: 'pupID', select: 'name address' });
     return res.send({ message: 'Регистрация прошла успешно', user });
   } catch (e) {
     if (e instanceof mongoose.Error.ValidationError) {
@@ -66,6 +69,21 @@ usersRouter.post('/staff', auth, permit('super'), async (req: RequestWithUser, r
   }
 });
 
+usersRouter.get('/staff/:id', async (req, res, next) => {
+  try {
+    const staffParamsEmail = req.params.id;
+    const user = await User.findOne({ email: staffParamsEmail }).select('-token -address');
+
+    if (!user) {
+      return res.status(404).send({ message: 'Сотрудник не найден!' });
+    }
+
+    return res.send({ message: 'Сотрудник найден!', user });
+  } catch (e) {
+    return next(e);
+  }
+});
+
 usersRouter.get('/', async (req, res, next) => {
   try {
     const { region, settlement, role } = req.query;
@@ -86,8 +104,48 @@ usersRouter.get('/', async (req, res, next) => {
       : User.find()
           .populate({ path: 'region', select: 'name' })
           .populate({ path: 'pupID', select: 'name address' }));
-    res.send({ message: 'Данные о пользователях', users });
+    return res.send({ message: 'Данные о пользователях', users });
   } catch (e) {
+    next(e);
+  }
+});
+
+usersRouter.get('/clients', auth, permit('admin', 'manager', 'super'), async (req, res, next) => {
+  try {
+    const marketId = req.query.marketId;
+
+    if (marketId) {
+      const isInputValid = (marketIdString: string) => {
+        const regex = /^\d{5}$/;
+        return regex.test(marketIdString);
+      };
+
+      if (!isInputValid(marketId as string)) {
+        return res.status(422).send({ message: 'Неверные данные', client: {} });
+      }
+      const client = await User.findOne({ marketId: marketId })
+        .populate('region')
+        .populate({ path: 'pupID', populate: { path: 'region' } });
+      if (!client) {
+        return res.status(404).send({ message: 'Пользователь не найден', client: {} });
+      }
+      return res.send({ message: 'Пользователь успешно найден', client });
+    }
+
+    const clients = await User.find({ role: 'client' })
+      .populate('region')
+      .populate({ path: 'pupID', populate: { path: 'region' } })
+      .sort({ _id: 1 });
+    const isEmpty = clients.length < 1;
+
+    if (isEmpty) {
+      return res.status(404).send({ message: 'Нет клиентов', clients: clients });
+    }
+    return res.send({ message: 'Клиенты успешно найдены', clients });
+  } catch (e) {
+    if (e instanceof mongoose.Error.CastError) {
+      return res.status(422).send(e);
+    }
     next(e);
   }
 });
@@ -96,6 +154,7 @@ usersRouter.get('/:id', async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await User.findById(userId)
+      .select('-token')
       .populate({
         path: 'region',
         select: 'name',
@@ -112,7 +171,7 @@ usersRouter.get('/:id', async (req, res) => {
 
 usersRouter.post('/sessions', async (req, res, next) => {
   try {
-    const user = await User.findOne({ email: req.body.email }).populate('region');
+    const user = await User.findOne({ email: req.body.email }).populate('region pupID');
 
     if (!user) {
       return res.status(422).send({ message: 'Пользователь не найден!' });
@@ -196,9 +255,9 @@ usersRouter.delete(
       }
 
       if (user.role === 'client' && role === 'admin') {
-        await User.findByIdAndDelete(itemId);
+        await User.findOneAndDelete({ _id: itemId });
       } else if (role === 'super') {
-        await User.findByIdAndDelete(itemId);
+        await User.findOneAndDelete({ _id: itemId });
       } else {
         return res.status(404).send({ message: 'У вас нет полномочий!' });
       }

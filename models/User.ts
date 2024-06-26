@@ -5,6 +5,7 @@ import { PhoneNumberUtil } from 'google-libphonenumber';
 import { UserFields, UserModel } from '../types/user.types';
 import PUP from './Pup';
 import Region from './Region';
+import Shipment from './Shipment';
 
 const SALT_WORK_fACTOR = 10;
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -38,9 +39,12 @@ const UserSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'PUP',
     required: true,
-    validate: async (value: Types.ObjectId) => {
-      const pup = await PUP.findById(value);
-      return Boolean(pup);
+    validator: {
+      validate: async (value: Types.ObjectId) => {
+        const region = await PUP.findById(value);
+        return Boolean(region);
+      },
+      message: 'Такого ПВЗ не существует',
     },
   },
   firstName: {
@@ -113,7 +117,7 @@ const UserSchema = new mongoose.Schema({
         const region = await Region.findById(value);
         return Boolean(region);
       },
-      message: 'Такой ПВЗ не существует',
+      message: 'Такого региона не существует',
     },
   },
 });
@@ -139,6 +143,14 @@ UserSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
 
   next();
+});
+
+UserSchema.post('findOneAndDelete', async function (user) {
+  try {
+    await Shipment.deleteMany({ userId: user?._id });
+  } catch (e) {
+    console.log('Caught in middleware on try - ON USER DELETE - ', e);
+  }
 });
 
 UserSchema.set('toJSON', {
