@@ -5,6 +5,7 @@ import permit from '../middleware/permit';
 import Shipment from '../models/Shipment';
 import {
   DeliveryData,
+  ShipmentBody,
   ShipmentData,
   ShipmentKeys,
   ShipmentStatusData,
@@ -81,6 +82,28 @@ shipmentsRouter.post(
   permit('admin', 'super'),
   async (req: RequestWithUser, res, next) => {
     try {
+      const shipmentsData: ShipmentBody = req.body;
+      const isDimensionsDefault =
+        shipmentsData.dimensions.height === '' ||
+        shipmentsData.dimensions.width === '' ||
+        shipmentsData.dimensions.length === '';
+      const isDefault = shipmentsData.userMarketId === '' && isDimensionsDefault;
+
+      if (isDefault) {
+        const defaultShipment = {
+          userId: req.user?._id,
+          dimensions: shipmentsData.dimensions,
+          weight: shipmentsData.weight,
+          price: { usd: 0, som: 0 },
+          trackerNumber: req.body.trackerNumber,
+          isPriceVisible: false,
+        };
+
+        const shipment = new Shipment(defaultShipment);
+        await shipment.save();
+        return res.send({ message: 'Cоздан анонимный груз с настройками по умолчанию', shipment });
+      }
+
       const newShipment = await getShipmentData(req, res);
       const shipment = new Shipment(newShipment);
       await shipment.save();
@@ -102,6 +125,7 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
     const datetime = req.query.datetime as string;
     const orderByTrackingNumber = req.query.orderByTrackingNumber as string;
     const marketId = req.query.marketId as string;
+    const isAdmin = user?.role === 'admin' || user?.role === 'super' || user?.role === 'manager';
 
     if (marketId) {
       const shipments = await Shipment.find({ userMarketId: marketId }).populate(
@@ -122,8 +146,27 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
 
     if (orderByTrackingNumber) {
       const shipment = await Shipment.findOne({ trackerNumber: orderByTrackingNumber });
+      const isAnonymous = shipment?.userMarketId === 0;
+      const isOwner = shipment?.userId.toString() === user?.id;
 
-      return res.send({ message: 'Поиск по трекеру', shipment });
+      if (shipment && !isAnonymous && isOwner) {
+        return res.send({ message: 'Груз успешно найден', shipment });
+      }
+
+      if (isAdmin) {
+        return res.send({ message: 'Груз успешно найден', shipment });
+      }
+
+      if (isAnonymous) {
+        const update = await Shipment.findOneAndUpdate(
+          { trackerNumber: orderByTrackingNumber },
+          { userMarketId: user?.marketId },
+          { new: true },
+        );
+        return res.send({ message: 'Анонимному грузу присвоен идентификатор', shipment: update });
+      }
+
+      return res.send({ message: 'Не найдено грузов', shipment: null });
     }
 
     if (pupId) {
@@ -180,7 +223,8 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
       const shipments = await Shipment.find(filter)
         .populate('userId', 'firstName lastName')
         .populate('pupId', '_id name address settlement region phoneNumber')
-        .limit(30);
+        .limit(30)
+        .sort({ _id: 1 });
       return res.send({ message: 'Список грузов', shipments });
     }
   } catch (e) {
@@ -188,34 +232,32 @@ shipmentsRouter.get('/', auth, async (req: RequestWithUser, res) => {
   }
 });
 
-shipmentsRouter.delete('/:id', auth, async (req: RequestWithUser, res, next) => {
-  try {
-    const id = req.params.id;
-    const user = req.user;
-
+shipmentsRouter.delete(
+  '/:id',
+  auth,
+  permit('admin', 'super', 'manager'),
+  async (req: RequestWithUser, res, next) => {
     try {
-      new mongoose.Types.ObjectId(id);
-    } catch {
-      return res.status(404).send({ error: 'Wrong ID!' });
+      const id = req.params.id;
+
+      try {
+        new mongoose.Types.ObjectId(id);
+      } catch {
+        return res.status(404).send({ error: 'Wrong ID!' });
+      }
+
+      const result = await Shipment.findByIdAndDelete(id);
+
+      if (!result) {
+        return res.status(404).send({ message: 'Груз не найден' });
+      }
+
+      return res.send({ message: 'Груз успешно удален', result });
+    } catch (e) {
+      return next(e);
     }
-
-    const shipment = await Shipment.findById(id);
-
-    if (shipment?.userMarketId !== user?.marketId) {
-      return res.status(401).send({ message: 'Вы не имеете права удалять чужие грузы!' });
-    }
-
-    const result = await Shipment.findByIdAndDelete(id);
-
-    if (!result) {
-      return res.status(404).send({ message: 'Груз не найден' });
-    }
-
-    return res.send({ message: 'Груз успешно удален', result });
-  } catch (e) {
-    return next(e);
-  }
-});
+  },
+);
 
 shipmentsRouter.put(
   '/:id',
@@ -235,6 +277,7 @@ shipmentsRouter.put(
 
       const shipment = await Shipment.findByIdAndUpdate(id, newShipment, { new: true });
 
+      console.log('newShipment', newShipment);
       if (!shipment) {
         return res.status(404).send({ message: 'Груз не найден' });
       }

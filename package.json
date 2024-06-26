@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon server.ts",
     "start:test": "NODE_ENV=test ts-node server.ts",
+    "start": "ts-node server.ts",
     "seed": "ts-node fixtures.ts",
     "seed:test": "NODE_ENV=test ts-node fixtures.ts",
     "lint": "eslint */*.ts",
